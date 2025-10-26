@@ -1,26 +1,24 @@
-import { Assets, Graphics, Rectangle, Sprite } from 'pixi.js'
+import { Graphics, Rectangle, Sprite, Texture } from 'pixi.js'
 import { Component } from '@/assets/emerald/core/component'
 
 export class Card extends Component {
   speed: number = 0
 
-  _frontImgPath: string
+  _texture: Texture
   _sprite!: Sprite
 
-  constructor(frontImgPath: string, term: string) {
+  constructor(texture: Texture, term: string) {
     super()
-    this._frontImgPath = frontImgPath
+    this._texture = texture
   }
 
-  async init(): Promise<void> {
-    const texture = await Assets.load(this._frontImgPath)
-
+  init(): void {
     this._sprite = (() => {
-      const sprite = new Sprite(texture)
+      const sprite = new Sprite(this._texture)
       sprite.setSize(200, 200)
       return sprite
     })()
-    this.container.addChild(this._sprite)
+    this.addChild(this._sprite)
 
     const mask = (() => {
       const graphics = new Graphics()
@@ -29,24 +27,24 @@ export class Card extends Component {
       return graphics
     })()
 
-    this.container.addChild(mask)
+    this.addChild(mask)
     this._sprite.mask = mask
 
-    this.container.pivot.x = this.container.width / 2
-    this.container.pivot.y = this.container.height / 2
+    this.pivot.x = this.width / 2
+    this.pivot.y = this.height / 2
 
-    this.container.hitArea = new Rectangle(0, 0, 200, 200)
-    this.container.eventMode = 'dynamic'
-    this.container.cursor = 'pointer'
+    this.hitArea = new Rectangle(0, 0, 200, 200)
+    this.eventMode = 'dynamic'
+    this.cursor = 'pointer'
   }
 
   start(): void {
-    this.container.onclick = () => {
+    this.onclick = () => {
       this.speed++
     }
   }
 
   update(deltaTime: number): void {
-    this.container.rotation += 0.01 * deltaTime * this.speed
+    this.rotation += 0.01 * deltaTime * this.speed
   }
 }

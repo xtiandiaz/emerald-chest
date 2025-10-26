@@ -11,9 +11,9 @@ onMounted(async () => {
   
   scene.start()
   
-  // window.addEventListener('click', () => {
-  //   scene.hastenCards()
-  // })
+  window.addEventListener('click', () => {
+    scene.animateCards()
+  })
 })
 </script>
 
