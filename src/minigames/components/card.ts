@@ -2,7 +2,7 @@ import { Graphics, Rectangle, Sprite, Texture } from 'pixi.js'
 import { Component } from '@/assets/emerald/core/component'
 
 export class Card extends Component {
-  speed: number = 0
+  speed: number = 0.1
 
   _texture: Texture
   _sprite!: Sprite
@@ -36,12 +36,6 @@ export class Card extends Component {
     this.hitArea = new Rectangle(0, 0, 200, 200)
     this.eventMode = 'dynamic'
     this.cursor = 'pointer'
-  }
-
-  start(): void {
-    this.onclick = () => {
-      this.speed++
-    }
   }
 
   update(deltaTime: number): void {

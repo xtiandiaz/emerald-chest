@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, useTemplateRef } from 'vue';
 import { TestScene } from './minigames/scenes/test';
 
-const scene = new TestScene({
-  speed: 1
-})
+const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
+const scene = new TestScene()
 
 onMounted(async () => {
-  await scene.init()
+  await scene.init({
+    canvas: canvas.value!,
+    resizeTo: window,
+  })
   
   scene.start()
   
@@ -18,6 +20,13 @@ onMounted(async () => {
 </script>
 
 <template>
+  <canvas ref="canvas"></canvas>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+</style>
