@@ -1,28 +1,31 @@
-import { Graphics, Rectangle, Sprite, Texture } from 'pixi.js'
+import { Graphics, Rectangle, Point, Sprite, Texture } from 'pixi.js'
 import { Component } from '@/assets/emerald/core/component'
 
 export class Card extends Component {
-  speed: number = 0.1
+  speed: number = 0
 
-  _texture: Texture
   _sprite!: Sprite
 
-  constructor(texture: Texture, term: string) {
+  constructor(term: string) {
     super()
-    this._texture = texture
   }
 
-  init(): void {
+  init(texture: Texture, size: number): void {
     this._sprite = (() => {
-      const sprite = new Sprite(this._texture)
-      sprite.setSize(200, 200)
+      const sprite = new Sprite(texture)
+      if (texture.height > texture.width) {
+        sprite.setSize(size, (size * texture.height) / texture.width)
+      } else {
+        sprite.setSize((size * texture.width) / texture.height, size)
+      }
+      sprite.position = new Point(size - sprite.width, size - sprite.height)
       return sprite
     })()
     this.addChild(this._sprite)
 
     const mask = (() => {
       const graphics = new Graphics()
-      graphics.roundRect(0, 0, 200, 200, 24)
+      graphics.roundRect(0, 0, size, size, 24)
       graphics.fill(0x000000)
       return graphics
     })()
@@ -33,7 +36,7 @@ export class Card extends Component {
     this.pivot.x = this.width / 2
     this.pivot.y = this.height / 2
 
-    this.hitArea = new Rectangle(0, 0, 200, 200)
+    this.hitArea = new Rectangle(0, 0, size, size)
     this.eventMode = 'dynamic'
     this.cursor = 'pointer'
   }
