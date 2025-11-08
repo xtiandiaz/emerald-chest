@@ -10,7 +10,12 @@ defineProps<{
 </script>
 
 <template>
-  <div class="card" @click="showsFront = !showsFront">
+  <div 
+    class="card" 
+    @click="showsFront = !showsFront" 
+    @mousedown="console.log('down!')"
+    @mouseup="console.log('up!')"
+  >
     <Transition mode="out-in">
       <div v-if="showsFront" class="front" :style="{ backgroundImage: `url('${imgPath}')` }"></div>
       <div v-else class="back">
