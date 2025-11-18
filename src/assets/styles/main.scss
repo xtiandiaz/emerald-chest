@@ -1,11 +1,14 @@
 @use '@/assets/design-tokens/typography';
 
 html, body {
+  background-color: black;
   margin: 0;
+  overflow: hidden;
+  padding: 0;
 }
 
-canvas {
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
+// canvas {
+//   height: 100%;
+//   position: absolute;
+//   width: 100%;
+// }

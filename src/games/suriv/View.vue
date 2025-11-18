@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { onMounted, useTemplateRef } from 'vue';
-import { SurivScene } from './scene';
+import scene from './scene';
 import { Color, ColorScheme, schemeColor } from '@/assets/design-tokens/palette';
 
+const viewport = useTemplateRef<HTMLElement>('viewport')
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
-const scene = new SurivScene()
 
 onMounted(async () => {
   await scene.init({
-    background: schemeColor(ColorScheme.Dark, Color.Background),
+    background: schemeColor(ColorScheme.Dark, Color.Gray),
     canvas: canvas.value!,
-    resizeTo: window
+    resizeTo: viewport.value!,
   })
   
   scene.start()
@@ -18,5 +18,25 @@ onMounted(async () => {
 </script>
 
 <template>
-  <canvas ref="canvas" />
+  <div id="viewport" ref="viewport">
+    <canvas ref="canvas"></canvas>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+@use '@/assets/design-tokens/palette';
+
+#viewport {
+  aspect-ratio: calc(16/9);
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+  width: 100vw;
+  @include palette.color-attribute('background', 'orange');
+}
+
+canvas {
+  position: absolute;
+  background: transparent;
+}
+</style>

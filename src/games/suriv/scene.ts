@@ -1,25 +1,33 @@
+import { Tweener } from '@/assets/emerald/core/tweener'
 import { Scene } from '@/assets/emerald/core/scene'
-import type { ApplicationOptions } from 'pixi.js'
-import { Blob } from './blob'
+import { Blob } from './components/blob'
+import stage from './components/stage'
 
-export class SurivScene extends Scene {
-  private player = new Blob()
+const scene = new Scene()
 
-  async init(options?: Partial<ApplicationOptions>): Promise<void> {
-    await super.init(options)
+const player = new Blob(0xffffff)
 
-    this.addEntity(this.player)
-  }
-
-  start(): void {
-    super.start()
-
-    this.player.position.set(this.screen.width / 2, this.screen.height / 2)
-
-    this.stage.interactive = true
-
-    this.stage.on('globalpointermove', (e) => {
-      this.player.position.set(e.x, e.y)
-    })
-  }
+scene.onInit = (s) => {
+  s.addEntity(stage)
+  s.addEntity(player)
 }
+
+scene.onStart = (s) => {
+  player.position.set(s.viewport.width / 2, s.viewport.height / 2)
+  player.scale = 1
+
+  s.stage.interactive = true
+
+  s.stage.on('globalpointermove', (e) => {
+    const localPos = e.getLocalPosition(s.stage)
+    player.position = localPos
+  })
+
+  s.stage.on('click', () => {
+    Tweener.main.to(player, { scaleX: 2, scaleY: 2 }, 'ease.out', 1).vars.onComplete = () => {
+      console.log('done')
+    }
+  })
+}
+
+export default scene

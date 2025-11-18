@@ -1,7 +1,7 @@
 import { Scene } from '@/assets/emerald/core/scene'
 import { Card } from './card'
-import { Assets, Point, Rectangle, Texture, type ApplicationOptions } from 'pixi.js'
-import { Tweener, Ease } from '@/assets/emerald/core/tweener'
+import { Assets, Rectangle, Texture, type ApplicationOptions } from 'pixi.js'
+import { Tweener } from '@/assets/emerald/core/tweener'
 import { Color, ColorScheme, schemeColor } from '@/assets/design-tokens/palette'
 import { CardGrid } from './card-grid'
 
@@ -45,22 +45,22 @@ export class BirdiesScene extends Scene {
 
   draw(): void {
     const margin = 32
-    const gridDim = Math.min(this.screen.width, this.screen.height) - margin * 2
+    const gridDim = Math.min(this.viewport.width, this.viewport.height) - margin * 2
 
     this._grid.draw(new Rectangle(0, 0, gridDim, gridDim))
   }
 
   async animateCards(): Promise<void> {
     for await (const card of this._cards) {
-      await Tweener.shared.tween(card, 'rotation', card.rotation + Math.PI, 2, Ease.BackOut(1))
+      await Tweener.main.toAsync(card, { rotation: card.rotation + 180 }, 'back.out', 2)
       this.destroyEntity(card.id)
     }
   }
 
   onResize(): void {
     this._grid.position.set(
-      (this.screen.width - this._grid.width) / 2,
-      (this.screen.height - this._grid.height) / 2,
+      (this.viewport.width - this._grid.width) / 2,
+      (this.viewport.height - this._grid.height) / 2,
     )
     this._placeCards()
   }
