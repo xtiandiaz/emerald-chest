@@ -7,12 +7,15 @@ const scene = new Scene()
 const player = new Player()
 
 scene.onInit = (s) => {
-  s.add(grid)
-  s.add(player)
+  grid.init()
+  player.init()
+
+  s.addEntity(grid)
+  s.addEntity(player)
 }
 
 scene.onStart = (s) => {
-  player.position.set(s.viewport.width / 2, s.viewport.height / 2)
+  player.position.set(s.bounds.width / 2, s.bounds.height / 2)
   player.scale = 1
 
   s.stage.interactive = true

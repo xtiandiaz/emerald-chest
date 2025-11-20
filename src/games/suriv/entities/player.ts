@@ -11,6 +11,8 @@ export class Player extends Blob {
   init(): void {
     super.init()
 
-    this.add(this.movement)
+    this.movement.init()
+
+    this.addComponent(this.movement)
   }
 }

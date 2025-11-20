@@ -12,10 +12,13 @@ export class Blob extends Entity {
 
   init(): void {
     super.init()
+
     this.addChild(this.graphics)
   }
 
-  draw(_: Rectangle): void {
+  draw(bounds: Rectangle): void {
+    super.draw(bounds)
+
     const g = this.graphics
     g.circle(0, 0, 20)
     g.fill(this.color)

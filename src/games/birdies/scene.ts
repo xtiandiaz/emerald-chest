@@ -31,21 +31,21 @@ export class BirdiesScene extends Scene {
     await Assets.load(this._imgPaths)
 
     this._grid.init()
-    this.add(this._grid)
+    this.addEntity(this._grid)
 
     for (const texturePath of this._imgPaths) {
       const texture = Texture.from(texturePath)
       const card = new Card('')
       card.initWithTexture(texture, 200)
 
-      this.add(card)
+      this.addEntity(card)
       this._cards.push(card)
     }
   }
 
   draw(): void {
     const margin = 32
-    const gridDim = Math.min(this.viewport.width, this.viewport.height) - margin * 2
+    const gridDim = Math.min(this.bounds.width, this.bounds.height) - margin * 2
 
     this._grid.draw(new Rectangle(0, 0, gridDim, gridDim))
   }
@@ -53,14 +53,14 @@ export class BirdiesScene extends Scene {
   async animateCards(): Promise<void> {
     for await (const card of this._cards) {
       await Tweener.main.toAsync(card, { rotation: card.rotation + 180 }, 'back.out', 2)
-      this.destroy(card.id)
+      this.destroyEntity(card.id)
     }
   }
 
   onResize(): void {
     this._grid.position.set(
-      (this.viewport.width - this._grid.width) / 2,
-      (this.viewport.height - this._grid.height) / 2,
+      (this.bounds.width - this._grid.width) / 2,
+      (this.bounds.height - this._grid.height) / 2,
     )
     this._placeCards()
   }
