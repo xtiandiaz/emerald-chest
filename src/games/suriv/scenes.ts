@@ -1,23 +1,28 @@
-import { Scene, Screen, System, World, type SignalBus } from '@/assets/emerald/core'
-import { GestureSystem, PhysicsSystem } from '@/assets/emerald/systems'
+import { Scene, World, type SignalBus, type SignalEmitter } from '@/assets/emerald/core'
 import { createBoundaries, createPlayer } from './entities'
-import { CollisionSystem, MovementSystem, PlayerControlSystem } from './systems'
+import { CollisionSystem, ControlSystem } from './systems'
+import { GestureSignal } from '@/assets/emerald/signals'
+import { GestureKey } from '@/assets/emerald/input'
+import { InputController } from '@/assets/emerald/controllers'
 
 export class DemoScene extends Scene {
   systems = [
-    new PhysicsSystem(),
     // new CollisionSystem(),
-    // new MovementSystem(),
-    new PlayerControlSystem(),
+    new ControlSystem(),
   ]
+  private input = new InputController()
 
   constructor() {
     super('demo')
   }
 
-  build(world: World): void {
-    createBoundaries().forEach((b) => world.addEntity(b))
+  async init(world: World, sbe: SignalBus & SignalEmitter): Promise<void> {
+    await super.init(world, sbe)
 
-    world.addEntity(createPlayer())
+    world.addEntity(...createBoundaries(), createPlayer())
+
+    this.input.trackGesture(GestureKey.Tap, this.slate, (g) => {
+      sbe.emit(new GestureSignal(g))
+    })
   }
 }

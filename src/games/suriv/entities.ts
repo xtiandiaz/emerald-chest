@@ -1,8 +1,9 @@
 import { Entity, Screen } from '@/assets/emerald/core'
-import { PhysicsComponent } from '@/assets/emerald/components'
-import { Graphics, Rectangle, Point } from 'pixi.js'
+import { PhysicsComponent, GestureTargetComponent } from '@/assets/emerald/components'
+import { Graphics, Rectangle, Point, Sprite } from 'pixi.js'
 import { Bodies } from 'matter-js'
 import { PlayerComponent } from './components'
+import { GestureKey } from '@/assets/emerald/input'
 
 export function createBoundaries(): Entity[] {
   const thickness = 100
@@ -50,15 +51,15 @@ export function createBoundaries(): Entity[] {
 }
 
 export function createPlayer(): Entity {
-  const p = new Entity()
-  p.label = 'player'
+  const p = new Entity('player')
+  p.hitArea = new Rectangle(-20, -20, 40, 40)
 
   p.addChild(new Graphics().circle(0, 0, 20).fill(0xffffff))
+  p.addComponent(GestureTargetComponent, [GestureKey.Tap, GestureKey.Drag])
   p.addComponent(PlayerComponent)
   p.addComponent(
     PhysicsComponent,
     Bodies.circle(Screen.width / 2, Screen.height / 2, 20, {
-      isStatic: false,
       restitution: 0.25,
       label: p.label,
     }),

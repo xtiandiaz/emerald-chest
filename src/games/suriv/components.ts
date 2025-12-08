@@ -6,10 +6,12 @@ export enum PlayerControlMode {
 }
 
 export class PlayerComponent extends Component {
-  constructor(
-    public move: Vector = new Vector(),
-    public controlMode: PlayerControlMode = PlayerControlMode.Free,
-  ) {
+  constructor(public velocity: Vector = new Vector()) {
+    super()
+  }
+}
+export class EnemyComponent extends Component {
+  constructor(public velocity: Vector = new Vector()) {
     super()
   }
 }

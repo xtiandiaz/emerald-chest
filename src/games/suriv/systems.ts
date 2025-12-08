@@ -1,43 +1,52 @@
-import { World, System, Vector, type SignalBus, type SignalEmitter } from '@/assets/emerald/core'
-import { PhysicsComponent } from '@/assets/emerald/components'
-import { CollisionSignal, DragGestureSignal, SwipeGestureSignal } from '@/assets/emerald/signals'
-import { Body } from 'matter-js'
+import Matter from 'matter-js'
+import 'pixi.js/math-extras'
+import '@/assets/emerald/extensions/pixi.extensions'
+import {
+  World,
+  System,
+  Vector,
+  type SignalBus,
+  type SignalEmitter,
+  Screen,
+  Entity,
+} from '@/assets/emerald/core'
+import { PhysicsComponent, GestureComponent } from '@/assets/emerald/components'
+import { CollisionSignal, GestureSignal, ScreenResizeSignal } from '@/assets/emerald/signals'
 import { PlayerComponent } from './components'
 import { directionVector } from '@/assets/emerald/utils'
+import { GestureKey, Gesture, DragGesture, GesturePhase } from '@/assets/emerald/input'
 
 export class CollisionSystem extends System {
   init(world: World, sbe: SignalBus & SignalEmitter): void {
     sbe.connect(CollisionSignal, (s) => {
       const pc = world.getEntity(s.colliderId)?.getComponent(PhysicsComponent)
       if (pc) {
-        Body.setVelocity(pc.body, { x: (Math.random() < 0.5 ? -1 : 1) * 5, y: -12 })
+        Matter.Body.setVelocity(pc.body, { x: (Math.random() < 0.5 ? -1 : 1) * 5, y: -12 })
       }
     })
   }
 }
 
-export class PlayerControlSystem extends System {
+export class ControlSystem extends System {
+  static readonly MAX_SPEED = 10
+  private screenSpan = new Vector(100, 100)
+
   init(world: World, sbe: SignalBus & SignalEmitter): void {
-    this.disconnectables.push(
-      sbe.connect(SwipeGestureSignal, (s) => {
-        // c.move = pe.position.add(directionVector(s.direction).multiplyScalar(100))
-        const [e, c] = world.getEntitiesWithComponent(PlayerComponent)[0]!
-        const pc = e.getComponent(PhysicsComponent)!
-        Body.setVelocity(
-          pc.body,
-          directionVector(s.direction).multiplyScalar(10).add(pc.body.velocity),
-        )
-      }),
-    )
+    this.disconnectables.push(sbe.connect(ScreenResizeSignal, (s) => this.resetScreenSpan()))
+    this.resetScreenSpan()
   }
-}
 
-export class MovementSystem extends System {
   update(world: World, se: SignalEmitter, dt: number): void {
-    const [pe, pc] = world.getEntitiesWithComponent(PlayerComponent)[0]!
-    pe.position.x += (pc.move.x - pe.position.x) / 10
-    pe.position.y += (pc.move.y - pe.position.y) / 10
+    const ecs = world.getEntitiesWithComponent(GestureComponent)
+    for (const [e, c] of ecs) {
+      const tg = c.getGesture(GestureKey.Tap)
+      if (tg) {
+        e.getComponent(PhysicsComponent)?.setPosition(tg.worldPos)
+      }
+    }
+  }
 
-    // pc.move = pc.move.subtract(pe.position)
+  private resetScreenSpan() {
+    this.screenSpan = new Vector(Screen.width, Screen.height).divideByScalar(4)
   }
 }
