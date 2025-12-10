@@ -1,21 +1,21 @@
-import Matter from 'matter-js'
-import 'pixi.js/math-extras'
+import { Point } from 'pixi.js'
 import '@/assets/emerald/extensions/pixi.extensions'
+import 'pixi.js/math-extras'
 import { World, System, Vector, Screen, Direction, type SignalBus } from '@/assets/emerald/core'
 import { Physics } from '@/assets/emerald/components'
 import { CollisionSignal, GestureSignal } from '@/assets/emerald/signals'
-import { Movement } from './components'
-import { clamp, directionVector } from '@/assets/emerald/core/utils'
 import { GesturePhase, type DragGesture } from '@/assets/emerald/input'
+import { clamp, directionVector } from '@/assets/emerald/core/utils'
 import { connectDocumentEvent } from '@/assets/emerald/input/utils'
-import { Point } from 'pixi.js'
+import { Movement } from './components'
+import { ItemCollected } from './signals'
 
 export class CollisionSystem extends System {
   init(world: World, sb: SignalBus): void {
     sb.connect(CollisionSignal, (s) => {
-      const pc = world.getEntity(s.colliderId)?.getComponent(Physics)
-      if (pc) {
-        Matter.Body.setVelocity(pc.body, { x: (Math.random() < 0.5 ? -1 : 1) * 5, y: -12 })
+      if (world.getEntity(s.collidedId)?.label === 'collectable') {
+        world.removeEntity(s.collidedId)
+        sb.emit(new ItemCollected(1))
       }
     })
   }
@@ -61,7 +61,7 @@ export class ControlSystem extends System {
   }
 
   private handleKeyboardInput(e: KeyboardEvent, world: World) {
-    const p = world.getEntityByTag('player')?.getComponent(Physics)
+    const p = world.getEntityByLabel('player')?.getComponent(Physics)
     const applyForce = (dir: Vector) => p?.applyForce(dir.multiplyScalar(0.1))
     switch (e.key) {
       case 'ArrowUp':

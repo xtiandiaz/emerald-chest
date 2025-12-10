@@ -1,14 +1,7 @@
-@use '@/assets/design-tokens/typography';
-
-html, body {
+html,
+body {
   background-color: gray;
   margin: 0;
   overflow: hidden;
   padding: 0;
 }
-
-// canvas {
-//   height: 100%;
-//   position: absolute;
-//   width: 100%;
-// }

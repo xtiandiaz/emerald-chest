@@ -33,7 +33,7 @@ export function createBoundaries(): Entity[] {
     })
     .map((r, i) => {
       const e = new Entity()
-      e.label = 'wall' + i
+      e.label = 'wall'
 
       e.addChild(
         new Graphics().rect(-r!.width / 2, -r!.height / 2, r!.width, r!.height).fill(0xff0000),
@@ -52,7 +52,8 @@ export function createBoundaries(): Entity[] {
 }
 
 export function createPlayer(): Entity {
-  const p = new Entity('player')
+  const p = new Entity()
+  p.label = 'player'
   p.addChild(new Graphics().circle(0, 0, 20).fill(0xffffff))
 
   const pc = p
@@ -72,6 +73,27 @@ export function createPlayer(): Entity {
   // }
 
   return p
+}
+
+export function createCollectable(): Entity {
+  const c = new Entity()
+  c.label = 'collectable'
+  c.addChild(new Graphics().circle(0, 0, 10).stroke({ width: 3, color: 0xffffff }))
+  const padding = 50
+  c.addComponent(
+    new Physics(
+      Bodies.circle(
+        padding + Math.random() * (Screen.width - 2 * padding),
+        padding + Math.random() * (Screen.height - 2 * padding),
+        10,
+        {
+          isStatic: true,
+          isSensor: true,
+        },
+      ),
+    ),
+  )
+  return c
 }
 
 // update(_: number): void {
