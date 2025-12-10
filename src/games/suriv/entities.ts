@@ -1,13 +1,12 @@
-import { Entity, Screen } from '@/assets/emerald/core'
-import { PhysicsComponent, GestureTargetComponent } from '@/assets/emerald/components'
-import { Graphics, Rectangle, Point, Sprite } from 'pixi.js'
+import { Entity, Screen, Vector } from '@/assets/emerald/core'
+import { Physics, Tapping, Dragging, Swiping } from '@/assets/emerald/components'
+import { Graphics, Point, Rectangle } from 'pixi.js'
 import { Bodies } from 'matter-js'
-import { PlayerComponent } from './components'
-import { GestureKey } from '@/assets/emerald/input'
+import { Movement } from './components'
 
 export function createBoundaries(): Entity[] {
   const thickness = 100
-  const offset = 10
+  const offset = 0
   return Array(4)
     .fill(null)
     .map((_, i) => {
@@ -40,30 +39,37 @@ export function createBoundaries(): Entity[] {
         new Graphics().rect(-r!.width / 2, -r!.height / 2, r!.width, r!.height).fill(0xff0000),
       )
       e.addComponent(
-        PhysicsComponent,
-        Bodies.rectangle(r!.x, r!.y, r!.width, r!.height, {
-          isStatic: true,
-          label: e.label,
-        }),
+        new Physics(
+          Bodies.rectangle(r!.x, r!.y, r!.width, r!.height, {
+            isStatic: true,
+            label: e.label,
+          }),
+        ),
       )
+
       return e
     })
 }
 
 export function createPlayer(): Entity {
   const p = new Entity('player')
-  p.hitArea = new Rectangle(-20, -20, 40, 40)
-
   p.addChild(new Graphics().circle(0, 0, 20).fill(0xffffff))
-  p.addComponent(GestureTargetComponent, [GestureKey.Tap, GestureKey.Drag])
-  p.addComponent(PlayerComponent)
-  p.addComponent(
-    PhysicsComponent,
-    Bodies.circle(Screen.width / 2, Screen.height / 2, 20, {
-      restitution: 0.25,
-      label: p.label,
-    }),
-  )
+
+  const pc = p
+    .addComponent(
+      new Physics(
+        Bodies.circle(Screen.width / 2, Screen.height / 2, 20, {
+          restitution: 0.25,
+          label: p.label,
+        }),
+      ),
+    )
+    .setGravity(0, 0)
+
+  p.addComponent(new Movement(new Point(pc.position.x, pc.position.y)))
+  // p.addComponent(new Swiping()).onGesture = (g) => {
+  //   pc.applyForce(g.direction.multiplyScalar(0.1))
+  // }
 
   return p
 }

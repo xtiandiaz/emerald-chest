@@ -1,28 +1,33 @@
-import { Scene, World, type SignalBus, type SignalEmitter } from '@/assets/emerald/core'
+import { Scene, World, type SignalBus } from '@/assets/emerald/core'
 import { createBoundaries, createPlayer } from './entities'
 import { CollisionSystem, ControlSystem } from './systems'
 import { GestureSignal } from '@/assets/emerald/signals'
-import { GestureKey } from '@/assets/emerald/input'
-import { InputController } from '@/assets/emerald/controllers'
+import { GestureKey, DragGestureTracker } from '@/assets/emerald/input'
 
 export class DemoScene extends Scene {
   systems = [
     // new CollisionSystem(),
     new ControlSystem(),
   ]
-  private input = new InputController()
+  private dragTracker = new DragGestureTracker()
 
   constructor() {
     super('demo')
   }
 
-  async init(world: World, sbe: SignalBus & SignalEmitter): Promise<void> {
-    await super.init(world, sbe)
+  async init(world: World, sb: SignalBus): Promise<void> {
+    await super.init(world, sb)
 
     world.addEntity(...createBoundaries(), createPlayer())
 
-    this.input.trackGesture(GestureKey.Tap, this.slate, (g) => {
-      sbe.emit(new GestureSignal(g))
+    this.dragTracker.init(this.slate, (g) => {
+      sb.emit(new GestureSignal(g))
     })
+  }
+
+  deinit(): void {
+    super.deinit()
+
+    this.dragTracker.deinit()
   }
 }

@@ -1,25 +1,19 @@
 import Matter from 'matter-js'
 import 'pixi.js/math-extras'
 import '@/assets/emerald/extensions/pixi.extensions'
-import {
-  World,
-  System,
-  Vector,
-  type SignalBus,
-  type SignalEmitter,
-  Screen,
-  Entity,
-} from '@/assets/emerald/core'
-import { PhysicsComponent, GestureComponent } from '@/assets/emerald/components'
-import { CollisionSignal, GestureSignal, ScreenResizeSignal } from '@/assets/emerald/signals'
-import { PlayerComponent } from './components'
-import { directionVector } from '@/assets/emerald/utils'
-import { GestureKey, Gesture, DragGesture, GesturePhase } from '@/assets/emerald/input'
+import { World, System, Vector, Screen, Direction, type SignalBus } from '@/assets/emerald/core'
+import { Physics } from '@/assets/emerald/components'
+import { CollisionSignal, GestureSignal } from '@/assets/emerald/signals'
+import { Movement } from './components'
+import { clamp, directionVector } from '@/assets/emerald/core/utils'
+import { GesturePhase, type DragGesture } from '@/assets/emerald/input'
+import { connectDocumentEvent } from '@/assets/emerald/input/utils'
+import { Point } from 'pixi.js'
 
 export class CollisionSystem extends System {
-  init(world: World, sbe: SignalBus & SignalEmitter): void {
-    sbe.connect(CollisionSignal, (s) => {
-      const pc = world.getEntity(s.colliderId)?.getComponent(PhysicsComponent)
+  init(world: World, sb: SignalBus): void {
+    sb.connect(CollisionSignal, (s) => {
+      const pc = world.getEntity(s.colliderId)?.getComponent(Physics)
       if (pc) {
         Matter.Body.setVelocity(pc.body, { x: (Math.random() < 0.5 ? -1 : 1) * 5, y: -12 })
       }
@@ -28,25 +22,60 @@ export class CollisionSystem extends System {
 }
 
 export class ControlSystem extends System {
-  static readonly MAX_SPEED = 10
-  private screenSpan = new Vector(100, 100)
+  private startControlPoint?: Point
 
-  init(world: World, sbe: SignalBus & SignalEmitter): void {
-    this.disconnectables.push(sbe.connect(ScreenResizeSignal, (s) => this.resetScreenSpan()))
-    this.resetScreenSpan()
+  init(world: World, sb: SignalBus): void {
+    this.connections.push(
+      sb.connect(GestureSignal<DragGesture>, (s) => this.setMovement(s.gesture, world)),
+      connectDocumentEvent('keydown', (e) => this.handleKeyboardInput(e, world)),
+    )
   }
 
-  update(world: World, se: SignalEmitter, dt: number): void {
-    const ecs = world.getEntitiesWithComponent(GestureComponent)
-    for (const [e, c] of ecs) {
-      const tg = c.getGesture(GestureKey.Tap)
-      if (tg) {
-        e.getComponent(PhysicsComponent)?.setPosition(tg.worldPos)
+  update(world: World, sb: SignalBus, dt: number): void {
+    const ecs = world.getEntitiesWithComponent(Movement)
+    for (const { e, c: mc } of ecs) {
+      const pc = e.getComponent(Physics)!
+      pc.setPosition(pc.position.add(mc.pos.subtract(pc.position).divideByScalar(5)))
+    }
+  }
+
+  private setMovement(g: DragGesture, w: World) {
+    const ecs = w.getEntitiesWithComponent(Movement)
+    for (const { e, c } of ecs) {
+      const pc = e.getComponent(Physics)!
+      if (g.phase == GesturePhase.Began) {
+        c.startPos.set(pc.position.x, pc.position.y)
+        this.startControlPoint = g.startWorldPos
+      }
+      c.pos = c.startPos.add(g.worldPos.subtract(this.startControlPoint!).multiplyScalar(4))
+
+      if (c.pos.x <= 0 || c.pos.x >= Screen.width) {
+        this.startControlPoint!.x = g.worldPos.x
+        c.startPos.x = clamp(c.pos.x, 0, Screen.width)
+      }
+      if (c.pos.y <= 0 || c.pos.y >= Screen.height) {
+        this.startControlPoint!.y = g.worldPos.y
+        c.startPos.y = clamp(c.pos.y, 0, Screen.height)
       }
     }
   }
 
-  private resetScreenSpan() {
-    this.screenSpan = new Vector(Screen.width, Screen.height).divideByScalar(4)
+  private handleKeyboardInput(e: KeyboardEvent, world: World) {
+    const p = world.getEntityByTag('player')?.getComponent(Physics)
+    const applyForce = (dir: Vector) => p?.applyForce(dir.multiplyScalar(0.1))
+    switch (e.key) {
+      case 'ArrowUp':
+        applyForce(directionVector(Direction.Up))
+        break
+      case 'ArrowRight':
+        applyForce(directionVector(Direction.Right))
+        break
+      case 'ArrowDown':
+        applyForce(directionVector(Direction.Down))
+        break
+      case 'ArrowLeft':
+        applyForce(directionVector(Direction.Left))
+        break
+    }
   }
 }

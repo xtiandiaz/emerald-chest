@@ -3,14 +3,7 @@ import { DemoScene } from './scenes'
 import { GestureSystem, PhysicsSystem } from '@/assets/emerald/systems'
 
 class Suriv extends GameApp {
-  protected systems = [
-    new GestureSystem(),
-    new PhysicsSystem({
-      gravity: {
-        y: 0,
-      },
-    }),
-  ]
+  protected systems = [new GestureSystem(), new PhysicsSystem()]
 }
 
 const state: GameState = {

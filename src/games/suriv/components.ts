@@ -1,17 +1,12 @@
 import { Component, Vector } from '@/assets/emerald/core'
+import type { Point } from 'pixi.js'
 
-export enum PlayerControlMode {
-  Free,
-  Bounded,
-}
+export class Movement extends Component {
+  pos: Point
 
-export class PlayerComponent extends Component {
-  constructor(public velocity: Vector = new Vector()) {
+  constructor(public startPos: Point) {
     super()
-  }
-}
-export class EnemyComponent extends Component {
-  constructor(public velocity: Vector = new Vector()) {
-    super()
+
+    this.pos = startPos
   }
 }
