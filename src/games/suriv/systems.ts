@@ -2,7 +2,7 @@ import { Point } from 'pixi.js'
 import '@/assets/emerald/extensions/pixi.extensions'
 import 'pixi.js/math-extras'
 import { World, System, Vector, Screen, Direction, type SignalBus } from '@/assets/emerald/core'
-import { Physics } from '@/assets/emerald/components'
+import { RigidBody } from '@/assets/emerald/components'
 import { CollisionSignal, GestureSignal } from '@/assets/emerald/signals'
 import { GesturePhase, type DragGesture } from '@/assets/emerald/input'
 import { clamp, directionVector } from '@/assets/emerald/core/utils'
@@ -34,15 +34,18 @@ export class ControlSystem extends System {
   update(world: World, sb: SignalBus, dt: number): void {
     const ecs = world.getEntitiesWithComponent(Movement)
     for (const { e, c: mc } of ecs) {
-      const pc = e.getComponent(Physics)!
-      pc.setPosition(pc.position.add(mc.pos.subtract(pc.position).divideByScalar(5)))
+      const b = e.getComponent(RigidBody)!
+      const nextPos = b.position.add(mc.pos.subtract(b.position).divideByScalar(5))
+      nextPos.x = clamp(nextPos.x, 0, Screen.width)
+      nextPos.y = clamp(nextPos.y, 0, Screen.height)
+      b.position.set(nextPos.x, nextPos.y)
     }
   }
 
   private setMovement(g: DragGesture, w: World) {
     const ecs = w.getEntitiesWithComponent(Movement)
     for (const { e, c } of ecs) {
-      const pc = e.getComponent(Physics)!
+      const pc = e.getComponent(RigidBody)!
       if (g.phase == GesturePhase.Began) {
         c.startPos.set(pc.position.x, pc.position.y)
         this.startControlPoint = g.startWorldPos
@@ -61,8 +64,12 @@ export class ControlSystem extends System {
   }
 
   private handleKeyboardInput(e: KeyboardEvent, world: World) {
-    const p = world.getEntityByLabel('player')?.getComponent(Physics)
-    const applyForce = (dir: Vector) => p?.applyForce(dir.multiplyScalar(0.1))
+    const b = world.getEntityByLabel('player')?.getComponent(RigidBody)
+    const applyForce = (dir: Vector) => {
+      if (b) {
+        b.force.copyFrom(dir.multiplyScalar(0.1))
+      }
+    }
     switch (e.key) {
       case 'ArrowUp':
         applyForce(directionVector(Direction.Up))

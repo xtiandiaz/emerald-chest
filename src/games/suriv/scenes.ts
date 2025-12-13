@@ -1,5 +1,5 @@
 import { Scene, World, Screen, type SignalBus, type Disconnectable } from '@/assets/emerald/core'
-import { createBoundaries, createCollectable, createPlayer } from './entities'
+import { createBoundaries, createCollectable, createEnemy, createPlayer } from './entities'
 import { CollisionSystem, ControlSystem } from './systems'
 import { GestureSignal } from '@/assets/emerald/signals'
 import { DragGestureTracker } from '@/assets/emerald/input'
@@ -16,7 +16,7 @@ export class DemoScene extends Scene {
   async init(world: World, sb: SignalBus): Promise<void> {
     await super.init(world, sb)
 
-    world.addEntity(...createBoundaries(), createPlayer(), createCollectable())
+    world.addEntity(...createBoundaries(), createPlayer(), createCollectable(), createEnemy())
 
     this.connections.push(sb.connect(ItemCollected, (_) => world.addEntity(createCollectable())))
 

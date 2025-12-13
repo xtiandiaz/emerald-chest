@@ -1,7 +1,7 @@
 import { Entity, Screen, Vector } from '@/assets/emerald/core'
-import { Physics, Tapping, Dragging, Swiping } from '@/assets/emerald/components'
-import { Graphics, Point, Rectangle } from 'pixi.js'
-import { Bodies } from 'matter-js'
+import { Tapping, Dragging, Swiping, RigidBody } from '@/assets/emerald/components'
+import { Graphics, Point, Rectangle, type RoundedPoint } from 'pixi.js'
+import M from 'matter-js'
 import { Movement } from './components'
 
 export function createBoundaries(): Entity[] {
@@ -12,88 +12,78 @@ export function createBoundaries(): Entity[] {
     .map((_, i) => {
       switch (i) {
         case 0: // top
-          return new Rectangle(Screen.width / 2, -thickness / 2 + offset, Screen.width, thickness)
+          return new Rectangle(0, -thickness + offset, Screen.width, thickness)
         case 1: // right
-          return new Rectangle(
-            Screen.width + thickness / 2 - offset,
-            Screen.height / 2,
-            thickness,
-            Screen.height,
-          )
+          return new Rectangle(Screen.width - offset, 0, thickness, Screen.height)
         case 2: // bottom
-          return new Rectangle(
-            Screen.width / 2,
-            Screen.height + thickness / 2 - offset,
-            Screen.width,
-            thickness,
-          )
+          return new Rectangle(0, Screen.height - offset, Screen.width, thickness)
         case 3: // left
-          return new Rectangle(-thickness / 2 + offset, Screen.height / 2, thickness, Screen.height)
+        default:
+          return new Rectangle(-thickness + offset, 0, thickness, Screen.height)
       }
     })
     .map((r, i) => {
       const e = new Entity()
       e.label = 'wall'
-
-      e.addChild(
-        new Graphics().rect(-r!.width / 2, -r!.height / 2, r!.width, r!.height).fill(0xff0000),
-      )
-      e.addComponent(
-        new Physics(
-          Bodies.rectangle(r!.x, r!.y, r!.width, r!.height, {
-            isStatic: true,
-            label: e.label,
-          }),
-        ),
-      )
+      e.addChild(new Graphics().rect(0, 0, r.width, r.height).fill(0xff0000))
+      e.position.set(r.x, r.y)
 
       return e
     })
 }
 
 export function createPlayer(): Entity {
-  const p = new Entity()
-  p.label = 'player'
-  p.addChild(new Graphics().circle(0, 0, 20).fill(0xffffff))
+  const e = new Entity()
+  e.label = 'player'
+  e.addChild(new Graphics().circle(0, 0, 20).fill(0xffffff))
 
-  const pc = p
-    .addComponent(
-      new Physics(
-        Bodies.circle(Screen.width / 2, Screen.height / 2, 20, {
-          restitution: 0.25,
-          label: p.label,
-        }),
-      ),
-    )
-    .setGravity(0, 0)
+  const rb = e.addComponent(new RigidBody(Screen.width / 2, Screen.height / 2))
+  // rb.velocity = new Vector(1, 0)
+  rb.isStatic = true
+  // rb.force = new Vector(10, -20)
 
-  p.addComponent(new Movement(new Point(pc.position.x, pc.position.y)))
+  e.addComponent(new Movement(new Point(rb.position.x, rb.position.y)))
   // p.addComponent(new Swiping()).onGesture = (g) => {
   //   pc.applyForce(g.direction.multiplyScalar(0.1))
   // }
 
-  return p
+  return e
 }
 
 export function createCollectable(): Entity {
-  const c = new Entity()
-  c.label = 'collectable'
-  c.addChild(new Graphics().circle(0, 0, 10).stroke({ width: 3, color: 0xffffff }))
+  const e = new Entity()
+  e.label = 'collectable'
+  e.addChild(new Graphics().circle(0, 0, 10).stroke({ width: 3, color: 0xffffff }))
   const padding = 50
-  c.addComponent(
-    new Physics(
-      Bodies.circle(
-        padding + Math.random() * (Screen.width - 2 * padding),
-        padding + Math.random() * (Screen.height - 2 * padding),
-        10,
-        {
-          isStatic: true,
-          isSensor: true,
-        },
-      ),
+  const rb = e.addComponent(
+    new RigidBody(
+      padding + Math.random() * (Screen.width - 2 * padding),
+      padding + Math.random() * (Screen.height - 2 * padding),
     ),
   )
-  return c
+  rb.isStatic = true
+  return e
+}
+
+const eR = 25
+const eM = { w: eR * 1.5, h: eR * 2 }
+const enemySPs = (offset: Point = new Point()): RoundedPoint[] => {
+  return [
+    [0, -eM.h / 2],
+    [eM.w / 2, eM.h / 2],
+    [0, eM.h / 3],
+    [-eM.w / 2, eM.h / 2],
+  ].map(([x, y]) => ({ x: x! + offset.x, y: y! + offset.y, radius: 2 }))
+}
+
+export function createEnemy(): Entity {
+  const e = new Entity()
+  e.label = 'enemy'
+  // const cOfM = M.Vertices.centre(enemySPs())
+  e.addChild(new Graphics().roundShape(enemySPs(), eR).fill(0x000000))
+  const pc = e.addComponent(new RigidBody(200, 200))
+  pc.isStatic = true
+  return e
 }
 
 // update(_: number): void {
