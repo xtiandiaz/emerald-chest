@@ -1,17 +1,27 @@
-import { Point } from 'pixi.js'
+import { Container, FederatedPointerEvent, Point } from 'pixi.js'
 import '@/assets/emerald/extensions/pixi.extensions'
 import 'pixi.js/math-extras'
-import { World, System, Vector, Screen, Direction, type SignalBus } from '@/assets/emerald/core'
+import {
+  World,
+  System,
+  Vector,
+  Screen,
+  Direction,
+  type SignalBus,
+  Entity,
+} from '@/assets/emerald/core'
 import { RigidBody } from '@/assets/emerald/components'
-import { CollisionSignal, GestureSignal } from '@/assets/emerald/signals'
+import { CollisionSignal, GestureSignal, ScreenResizeSignal } from '@/assets/emerald/signals'
 import { GesturePhase, type DragGesture } from '@/assets/emerald/input'
 import { clamp, directionVector } from '@/assets/emerald/core/utils'
-import { connectDocumentEvent } from '@/assets/emerald/input/utils'
+import { connectContainerEvent, connectDocumentEvent } from '@/assets/emerald/input/utils'
 import { Movement } from './components'
 import { ItemCollected } from './signals'
+import type { HUD } from '@/assets/emerald/ui'
+import { GestureTarget } from '@/assets/emerald/components/GestureTarget'
 
-export class CollisionSystem extends System {
-  init(world: World, sb: SignalBus): void {
+export class CollectingSystem extends System {
+  init(world: World, hud: HUD, sb: SignalBus): void {
     sb.connect(CollisionSignal, (s) => {
       if (world.getEntity(s.collidedId)?.label === 'collectable') {
         world.removeEntity(s.collidedId)
@@ -21,45 +31,71 @@ export class CollisionSystem extends System {
   }
 }
 
-export class ControlSystem extends System {
-  private startControlPoint?: Point
+interface PlayerControlState {
+  playerStartPos: Point
+  playerTargetPos: Point
+  controlStartPoint?: Point
+}
 
-  init(world: World, sb: SignalBus): void {
+export class PlayerControlSystem extends System {
+  private player!: Entity
+  private state?: PlayerControlState
+
+  init(world: World, hud: HUD, sb: SignalBus): void {
+    hud.eventMode = 'static'
+
+    this.player = world.getEntityByLabel('player')!
+
     this.connections.push(
-      sb.connect(GestureSignal<DragGesture>, (s) => this.setMovement(s.gesture, world)),
+      connectContainerEvent('pointerdown', hud, (e) => this.handlePointerInput(e)),
+      connectContainerEvent('globalpointermove', hud, (e) => this.handlePointerInput(e)),
+      connectContainerEvent('pointerup', hud, (e) => this.handlePointerInput(e)),
+
       connectDocumentEvent('keydown', (e) => this.handleKeyboardInput(e, world)),
     )
   }
 
   update(world: World, sb: SignalBus, dt: number): void {
-    const ecs = world.getEntitiesWithComponent(Movement)
-    for (const { e, c: mc } of ecs) {
-      const b = e.getComponent(RigidBody)!
-      const nextPos = b.position.add(mc.pos.subtract(b.position).divideByScalar(5))
-      nextPos.x = clamp(nextPos.x, 0, Screen.width)
-      nextPos.y = clamp(nextPos.y, 0, Screen.height)
-      b.position.set(nextPos.x, nextPos.y)
+    if (!this.state) {
+      return
     }
+    const rb = this.player.getComponent(RigidBody)!
+    const nextPos = rb.position.add(
+      this.state.playerTargetPos.subtract(rb.position).divideByScalar(6),
+    )
+    nextPos.x = clamp(nextPos.x, 0, Screen.width)
+    nextPos.y = clamp(nextPos.y, 0, Screen.height)
+    rb.position.set(nextPos.x, nextPos.y)
   }
 
-  private setMovement(g: DragGesture, w: World) {
-    const ecs = w.getEntitiesWithComponent(Movement)
-    for (const { e, c } of ecs) {
-      const pc = e.getComponent(RigidBody)!
-      if (g.phase == GesturePhase.Began) {
-        c.startPos.set(pc.position.x, pc.position.y)
-        this.startControlPoint = g.startWorldPos
-      }
-      c.pos = c.startPos.add(g.worldPos.subtract(this.startControlPoint!).multiplyScalar(4))
-
-      if (c.pos.x <= 0 || c.pos.x >= Screen.width) {
-        this.startControlPoint!.x = g.worldPos.x
-        c.startPos.x = clamp(c.pos.x, 0, Screen.width)
-      }
-      if (c.pos.y <= 0 || c.pos.y >= Screen.height) {
-        this.startControlPoint!.y = g.worldPos.y
-        c.startPos.y = clamp(c.pos.y, 0, Screen.height)
-      }
+  private handlePointerInput(e: FederatedPointerEvent) {
+    switch (e.type) {
+      case 'pointerdown':
+        this.state = {
+          controlStartPoint: e.global.clone(),
+          playerStartPos: this.player.position.clone(),
+          playerTargetPos: this.player.position.clone(),
+        }
+        break
+      case 'pointermove':
+        if (!this.state?.controlStartPoint) {
+          break
+        }
+        const dPos = e.global.subtract(this.state.controlStartPoint).multiplyScalar(4)
+        const tPos = this.state.playerStartPos.add(dPos)
+        if (tPos.x <= 0 || tPos.x >= Screen.width) {
+          this.state.controlStartPoint!.x = e.globalX
+          this.state.playerStartPos.x = clamp(tPos.x, 0, Screen.width)
+        }
+        if (tPos.y <= 0 || tPos.y >= Screen.height) {
+          this.state.controlStartPoint!.y = e.globalY
+          this.state.playerStartPos.y = clamp(tPos.y, 0, Screen.height)
+        }
+        this.state.playerTargetPos.set(tPos.x, tPos.y)
+        break
+      case 'pointerup':
+        this.state!.controlStartPoint = undefined
+        break
     }
   }
 
@@ -67,7 +103,7 @@ export class ControlSystem extends System {
     const b = world.getEntityByLabel('player')?.getComponent(RigidBody)
     const applyForce = (dir: Vector) => {
       if (b) {
-        b.force.copyFrom(dir.multiplyScalar(0.1))
+        b.force?.copyFrom(dir.multiplyScalar(0.1))
       }
     }
     switch (e.key) {

@@ -1,6 +1,5 @@
-import { Screen, type Disconnectable, type SignalBus, type System } from '@/assets/emerald/core'
+import { type Disconnectable, type SignalBus } from '@/assets/emerald/core'
 import { GameApp, type GameState } from '@/assets/emerald/game'
-import { PhysicsSystem } from '@/assets/emerald/systems'
 import { DemoScene } from './scenes'
 import { ItemCollected } from './signals'
 import { type Ref } from 'vue'
@@ -11,12 +10,8 @@ export interface SurivState extends GameState {
 }
 
 export class Suriv extends GameApp<SurivState> {
-  protected systems: System[] = [new PhysicsSystem()]
-
   constructor(state: SurivState) {
     super(state, [new DemoScene()])
-
-    this.systems.push()
   }
 
   async init(options: Partial<ApplicationOptions>): Promise<void> {

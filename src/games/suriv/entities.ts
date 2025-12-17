@@ -1,8 +1,9 @@
 import { Entity, Screen, Vector } from '@/assets/emerald/core'
-import { Tapping, Dragging, Swiping, RigidBody } from '@/assets/emerald/components'
-import { Graphics, Point, Rectangle, type RoundedPoint } from 'pixi.js'
-import M from 'matter-js'
+import { Tapping, Dragging, Swiping, RigidBody, Collider } from '@/assets/emerald/components'
+import { Graphics, Point, Rectangle, Sprite, SpritePipe, type RoundedPoint } from 'pixi.js'
 import { Movement } from './components'
+import { GestureTarget } from '@/assets/emerald/components/GestureTarget'
+import { GestureKey } from '@/assets/emerald/input'
 
 export function createBoundaries(): Entity[] {
   const thickness = 100
@@ -38,11 +39,15 @@ export function createPlayer(): Entity {
   e.addChild(new Graphics().circle(0, 0, 20).fill(0xffffff))
 
   const rb = e.addComponent(new RigidBody(Screen.width / 2, Screen.height / 2))
+  rb.gravity.set(0, 0)
+  // rb.rotation = Math.PI / 12
+  // e.addComponent(Collider.rectangle(-20, -20, 40, 40))
+  e.addComponent(Collider.circle(0, 0, 20))
   // rb.velocity = new Vector(1, 0)
-  rb.isStatic = true
   // rb.force = new Vector(10, -20)
 
-  e.addComponent(new Movement(new Point(rb.position.x, rb.position.y)))
+  e.addComponent(new GestureTarget([GestureKey.Drag]))
+  // e.addComponent(new Movement(new Point(rb.position.x, rb.position.y)))
   // p.addComponent(new Swiping()).onGesture = (g) => {
   //   pc.applyForce(g.direction.multiplyScalar(0.1))
   // }
@@ -54,6 +59,7 @@ export function createCollectable(): Entity {
   const e = new Entity()
   e.label = 'collectable'
   e.addChild(new Graphics().circle(0, 0, 10).stroke({ width: 3, color: 0xffffff }))
+
   const padding = 50
   const rb = e.addComponent(
     new RigidBody(
@@ -62,6 +68,9 @@ export function createCollectable(): Entity {
     ),
   )
   rb.isStatic = true
+
+  // e.addComponent(Collider.circle(0, 0, 10))
+  e.addComponent(Collider.rectangle(-10, -10, 20, 20))
   return e
 }
 
@@ -79,15 +88,10 @@ const enemySPs = (offset: Point = new Point()): RoundedPoint[] => {
 export function createEnemy(): Entity {
   const e = new Entity()
   e.label = 'enemy'
-  // const cOfM = M.Vertices.centre(enemySPs())
   e.addChild(new Graphics().roundShape(enemySPs(), eR).fill(0x000000))
+
   const pc = e.addComponent(new RigidBody(200, 200))
   pc.isStatic = true
+  e.addComponent(Collider.polygon(...enemySPs().flatMap((p) => [p.x, p.y])))
   return e
 }
-
-// update(_: number): void {
-// let bodyPos = new Point().copyFrom(this.body!.position)
-// bodyPos = bodyPos.add(this.controls.nextPos.subtract(this.body!.position).multiplyScalar(1 / 7))
-// Body.setPosition(this.body!, bodyPos)
-// }
