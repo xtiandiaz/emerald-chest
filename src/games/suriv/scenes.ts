@@ -31,13 +31,11 @@ export class DemoScene extends Scene {
   }
 
   build(world: World): void {
-    const p = world
+    world
       .createEntity('player')
       .addComponent(new PlayerSkin(24))
       .addComponent(new Collider(ColliderShape.circle(0, 0, 24), CollisionLayer.Player))
       .addComponent(new GestureTarget([GestureKey.Drag]))
-
-    p.addChild(new Graphics()).label = 'skin'
   }
 
   deinit(): void {

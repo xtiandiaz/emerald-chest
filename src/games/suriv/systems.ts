@@ -27,26 +27,31 @@ import { PlayerSkin } from './components'
 
 export class Skinning extends System {
   private player!: Entity
-  private skinGraphics!: Graphics
+  private skinGraphics = new Graphics()
   private prevPos!: Point
+  private tailElongFactor = 1
 
   init(world: World, hud: HUD, sb: SignalBus): void {
     this.player = world.getEntitiesByTag('player')![0]!
-    this.skinGraphics = (this.player.getChildByLabel('skin') as Graphics)!
+    this.player.addChild(this.skinGraphics)
+
     this.prevPos = this.player.position.clone()
   }
 
   update(world: World, sb: SignalBus, dt: number): void {
-    const elongFactor = clamp(
+    const skin = this.player.getComponent(PlayerSkin)!
+    const nextElongFactor = clamp(
       this.player.position.subtract(this.prevPos).magnitudeSquared() / (5 * 5),
       1,
       2,
     )
-    const skin = this.player.getComponent(PlayerSkin)!
-    skin.tailPoint.x = -skin.radius * elongFactor
+    this.tailElongFactor += (nextElongFactor - this.tailElongFactor) / 6
+    skin.tailPoint.x = -skin.radius * this.tailElongFactor
 
     this.skinGraphics.clear()
-    skin.draw(this.skinGraphics)
+    this.skinGraphics
+      .roundShape(skin.shapePoints, skin.radius, true, 0)
+      .stroke({ width: 5, color: Color.Energy })
 
     this.prevPos.copyFrom(this.player.position)
   }
