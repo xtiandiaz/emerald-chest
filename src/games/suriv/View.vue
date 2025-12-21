@@ -42,11 +42,12 @@ onBeforeUnmount(() => {
 
 #viewport {
   aspect-ratio: calc(16/9);
+  background-color: #0c0c18;
   position: relative;
   margin: 0 auto;
   overflow: hidden;
   width: 100vw;
-  @include palette.color-attribute('background', 'red');
+  // @include palette.color-attribute('background', 'background');
 }
 
 #HUD {

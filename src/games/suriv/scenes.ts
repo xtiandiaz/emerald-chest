@@ -5,17 +5,18 @@ import {
   CollisionSystem,
   DragGestureTracker,
   GestureSystem,
-  PhysicsSystem,
   Scene,
   World,
   type SignalBus,
 } from '@/assets/emerald'
+import { CollisionLayer } from './types'
 
 export class DemoScene extends Scene {
   systems = [
-    new PhysicsSystem(),
-    new CollisionSystem(),
     new GestureSystem(),
+    new CollisionSystem(
+      new Map([[CollisionLayer.Player, CollisionLayer.Collectable | CollisionLayer.Enemy]]),
+    ),
     new PlayerControlSystem(),
     new CollectingSystem(),
   ]
@@ -26,7 +27,7 @@ export class DemoScene extends Scene {
   }
 
   build(world: World): void {
-    world.addEntity(...createBoundaries(), createPlayer(), createCollectable(), createEnemy())
+    world.addEntity(...createBoundaries(), createPlayer(), createCollectable() /* createEnemy() */)
   }
 
   async init(world: World, sb: SignalBus): Promise<void> {

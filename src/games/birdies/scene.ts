@@ -52,7 +52,7 @@ export class BirdiesScene extends Scene {
 
   async animateCards(): Promise<void> {
     for await (const card of this._cards) {
-      await Tweener.main.toAsync(card, { rotation: card.rotation + 180 }, 'back.out', 2)
+      await Tweener.shared.toAsync(card, { rotation: card.rotation + 180 }, 'back.out', 2)
       this.destroyEntity(card.id)
     }
   }

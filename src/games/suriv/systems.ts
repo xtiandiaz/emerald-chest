@@ -58,13 +58,12 @@ export class PlayerControlSystem extends System {
     if (!this.state) {
       return
     }
-    const rb = this.player.getComponent(RigidBody)!
-    const nextPos = rb.position.add(
-      this.state.playerTargetPos.subtract(rb.position).divideByScalar(6),
+    const nextPos = this.player.position.add(
+      this.state.playerTargetPos.subtract(this.player.position).divideByScalar(6),
     )
     nextPos.x = clamp(nextPos.x, 0, Screen.width)
     nextPos.y = clamp(nextPos.y, 0, Screen.height)
-    rb.position.set(nextPos.x, nextPos.y)
+    this.player.position.set(nextPos.x, nextPos.y)
   }
 
   private handlePointerInput(e: FederatedPointerEvent) {
