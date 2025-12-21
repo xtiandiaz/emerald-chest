@@ -1,24 +1,28 @@
-import { createBoundaries, createCollectable, createEnemy, createPlayer } from './entities'
-import { CollectingSystem, PlayerControlSystem } from './systems'
-import { ItemCollected } from './signals'
+import { Graphics } from 'pixi.js'
 import {
+  Collider,
+  ColliderShape,
   CollisionSystem,
   DragGestureTracker,
+  GestureKey,
   GestureSystem,
+  GestureTarget,
   Scene,
   World,
-  type SignalBus,
 } from '@/assets/emerald'
-import { CollisionLayer } from './types'
+import { CollectablesSystem, PlayerControlSystem, Skinning } from './systems'
+import { PlayerSkin } from './components'
+import { CollisionLayer, Color } from './types'
 
 export class DemoScene extends Scene {
   systems = [
+    new Skinning(),
     new GestureSystem(),
     new CollisionSystem(
       new Map([[CollisionLayer.Player, CollisionLayer.Collectable | CollisionLayer.Enemy]]),
     ),
     new PlayerControlSystem(),
-    new CollectingSystem(),
+    new CollectablesSystem(),
   ]
   private draggingTracker = new DragGestureTracker()
 
@@ -27,13 +31,13 @@ export class DemoScene extends Scene {
   }
 
   build(world: World): void {
-    world.addEntity(...createBoundaries(), createPlayer(), createCollectable() /* createEnemy() */)
-  }
+    const p = world
+      .createEntity('player')
+      .addComponent(new PlayerSkin(24))
+      .addComponent(new Collider(ColliderShape.circle(0, 0, 24), CollisionLayer.Player))
+      .addComponent(new GestureTarget([GestureKey.Drag]))
 
-  async init(world: World, sb: SignalBus): Promise<void> {
-    await super.init(world, sb)
-
-    this.connections.push(sb.connect(ItemCollected, (_) => world.addEntity(createCollectable())))
+    p.addChild(new Graphics()).label = 'skin'
   }
 
   deinit(): void {

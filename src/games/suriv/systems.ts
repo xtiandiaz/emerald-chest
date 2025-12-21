@@ -1,4 +1,4 @@
-import { FederatedPointerEvent, Point } from 'pixi.js'
+import { FederatedPointerEvent, Graphics, Point } from 'pixi.js'
 import '@/assets/emerald/extensions/pixi.extensions'
 import 'pixi.js/math-extras'
 import {
@@ -15,18 +15,80 @@ import {
   Direction,
   Vector,
   directionVector,
+  sign,
+  Collider,
+  ColliderShape,
+  Tweener,
   type SignalBus,
 } from '@/assets/emerald'
 import { ItemCollected } from './signals'
+import { CollisionLayer, Color } from './types'
+import { PlayerSkin } from './components'
 
-export class CollectingSystem extends System {
+export class Skinning extends System {
+  private player!: Entity
+  private skinGraphics!: Graphics
+  private prevPos!: Point
+
+  init(world: World, hud: HUD, sb: SignalBus): void {
+    this.player = world.getEntitiesByTag('player')![0]!
+    this.skinGraphics = (this.player.getChildByLabel('skin') as Graphics)!
+    this.prevPos = this.player.position.clone()
+  }
+
+  update(world: World, sb: SignalBus, dt: number): void {
+    const elongFactor = clamp(
+      this.player.position.subtract(this.prevPos).magnitudeSquared() / (5 * 5),
+      1,
+      2,
+    )
+    const skin = this.player.getComponent(PlayerSkin)!
+    skin.tailPoint.x = -skin.radius * elongFactor
+
+    this.skinGraphics.clear()
+    skin.draw(this.skinGraphics)
+
+    this.prevPos.copyFrom(this.player.position)
+  }
+}
+
+export class CollectablesSystem extends System {
   init(world: World, hud: HUD, sb: SignalBus): void {
     sb.connect(CollisionSignal, (s) => {
-      if (world.getEntity(s.collidedId)?.label === 'collectable') {
+      if (world.getEntity(s.collidedId)?.tag == 'collectable') {
         world.removeEntity(s.collidedId)
+
         sb.emit(new ItemCollected(1))
+
+        this.placeNewCollectable(world)
       }
     })
+
+    this.placeNewCollectable(world)
+  }
+
+  private placeNewCollectable(world: World) {
+    const screenPadding = 50
+    const co = world
+      .createEntity('collectable')
+      .addComponent(new Collider(ColliderShape.circle(0, 0, 10), CollisionLayer.Collectable))
+
+    co.addChild(new Graphics().roundPoly(0, 0, 12, 5, 2).stroke({ width: 3, color: Color.Energy }))
+    co.position.set(
+      screenPadding + Math.random() * (Screen.width - 2 * screenPadding),
+      screenPadding + Math.random() * (Screen.height - 2 * screenPadding),
+    )
+
+    Tweener.shared
+      .timeline()
+      .to(co, {
+        pixi: { rotation: 45 },
+        startAt: { pixi: { rotation: -45 } },
+        ease: 'power3.inOut',
+        duration: 1,
+      })
+      .to(co, { pixi: { rotation: -45 }, ease: 'power3.inOut', duration: 1 })
+      .repeat(-1)
   }
 }
 
@@ -43,7 +105,8 @@ export class PlayerControlSystem extends System {
   init(world: World, hud: HUD, sb: SignalBus): void {
     hud.eventMode = 'static'
 
-    this.player = world.getEntityByLabel('player')!
+    this.player = world.getEntitiesByTag('player')![0]!
+    this.player.position.set(Screen.width / 2, Screen.height / 2)
 
     this.connections.push(
       connectContainerEvent('pointerdown', hud, (e) => this.handlePointerInput(e)),
@@ -63,7 +126,17 @@ export class PlayerControlSystem extends System {
     )
     nextPos.x = clamp(nextPos.x, 0, Screen.width)
     nextPos.y = clamp(nextPos.y, 0, Screen.height)
-    this.player.position.set(nextPos.x, nextPos.y)
+    const deltaPos = nextPos.subtract(this.player.position)
+
+    this.player.position.copyFrom(nextPos)
+
+    let nextRot: number
+    if (deltaPos.x == 0) {
+      nextRot = sign(deltaPos.y) * Math.PI * 0.5
+    } else {
+      nextRot = Math.atan(deltaPos.y / deltaPos.x) + (deltaPos.x < 0 ? Math.PI : 0)
+    }
+    this.player.rotation = nextRot
   }
 
   private handlePointerInput(e: FederatedPointerEvent) {
@@ -98,7 +171,7 @@ export class PlayerControlSystem extends System {
   }
 
   private handleKeyboardInput(e: KeyboardEvent, world: World) {
-    const b = world.getEntityByLabel('player')?.getComponent(RigidBody)
+    const b = world.getEntitiesByTag('player')![0]!.getComponent(RigidBody)
     const applyForce = (dir: Vector) => {
       if (b) {
         b.force?.copyFrom(dir.multiplyScalar(0.1))

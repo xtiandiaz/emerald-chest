@@ -1,6 +1,7 @@
-import { Graphics, Point, Rectangle, Sprite, SpritePipe, type RoundedPoint } from 'pixi.js'
+import { Graphics, Point, Rectangle, type RoundedPoint } from 'pixi.js'
 import { Collider, Entity, GestureKey, GestureTarget, Screen, Tweener } from '@/assets/emerald'
 import { CollisionLayer, Color } from './types'
+import { PlayerSkin } from './components'
 
 export function createBoundaries(): Entity[] {
   const thickness = 100
@@ -28,57 +29,6 @@ export function createBoundaries(): Entity[] {
 
       return e
     })
-}
-
-export function createPlayer(): Entity {
-  const e = new Entity()
-  e.label = 'player'
-  const r = 16
-  e.addChild(
-    new Graphics().roundRect(-r, -r, r * 2, r * 2, r).stroke({
-      width: 5,
-      color: Color.Energy,
-    }),
-  )
-  e.position.set(Screen.width / 2, Screen.height / 2)
-
-  // const rb = e.addComponent(new RigidBody(Screen.width / 2, Screen.height / 2))
-  // rb.gravity.set(0, 0)
-  // rb.rotation = Math.PI / 12
-  // rb.velocity = new Vector(1, 0)
-  // rb.force = new Vector(10, -20)
-  // e.addComponent(Collider.rectangle(-20, -20, 40, 40))
-  e.addComponent(Collider.circle(0, 0, r)).layer = CollisionLayer.Player
-  e.addComponent(new GestureTarget([GestureKey.Drag]))
-
-  return e
-}
-
-export function createCollectable(): Entity {
-  const e = new Entity()
-  e.label = 'collectable'
-  e.addChild(new Graphics().roundPoly(0, 0, 12, 5, 2).stroke({ width: 3, color: Color.Energy }))
-  const padding = 50
-  e.position.set(
-    padding + Math.random() * (Screen.width - 2 * padding),
-    padding + Math.random() * (Screen.height - 2 * padding),
-  )
-  e.addComponent(Collider.circle(0, 0, 10)).layer = CollisionLayer.Collectable
-
-  e.start = () => {
-    Tweener.shared
-      .timeline()
-      .to(e, {
-        pixi: { rotation: 45 },
-        startAt: { pixi: { rotation: -45 } },
-        ease: 'power3.inOut',
-        duration: 1,
-      })
-      .to(e, { pixi: { rotation: -45 }, ease: 'power3.inOut', duration: 1 })
-      .repeat(-1)
-  }
-
-  return e
 }
 
 const eR = 25
