@@ -1,58 +1,126 @@
-import { Graphics, Point, Rectangle, type RoundedPoint } from 'pixi.js'
-import { Collider, Entity, GestureKey, GestureTarget, Screen, Tweener } from '@/assets/emerald'
-import { CollisionLayer, Color } from './types'
-import { PlayerSkin } from './components'
+import { Graphics, TilingSprite, type PointData } from 'pixi.js'
+import {
+  Entity,
+  Screen,
+  Collider,
+  Tweener,
+  type BezierCurve,
+  BEZIER_CIRCLE_CP_LENGTH as CP_LEN,
+} from '@/assets/emerald'
+import { Color } from './values'
+import { CollisionSensor } from '@/assets/emerald/components/CollisionSensor'
+import { createCircleBezierCurves } from './utils'
 
-export function createBoundaries(): Entity[] {
-  const thickness = 100
-  const offset = 0
-  return Array(4)
-    .fill(null)
-    .map((_, i) => {
-      switch (i) {
-        case 0: // top
-          return new Rectangle(0, -thickness + offset, Screen.width, thickness)
-        case 1: // right
-          return new Rectangle(Screen.width - offset, 0, thickness, Screen.height)
-        case 2: // bottom
-          return new Rectangle(0, Screen.height - offset, Screen.width, thickness)
-        case 3: // left
-        default:
-          return new Rectangle(-thickness + offset, 0, thickness, Screen.height)
-      }
-    })
-    .map((r, i) => {
-      const e = new Entity()
-      e.label = 'wall'
-      e.addChild(new Graphics().rect(0, 0, r.width, r.height).fill(0xff0000))
-      e.position.set(r.x, r.y)
+export class Grid extends Entity {
+  private tSprite = TilingSprite.from('grid')
 
-      return e
-    })
+  init(): void {
+    this.tSprite.tint = Color.Energy
+    this.tSprite.alpha = 0.25
+    this.addChild(this.tSprite)
+  }
+
+  resize() {
+    this.tSprite.width = Screen.width
+    this.tSprite.height = Screen.height
+    this.rescale()
+  }
+
+  rescale() {
+    const vUnits = 4.5
+    const tileSize = Screen.height / vUnits
+    const tileScale = tileSize / this.tSprite.texture.height
+    this.tSprite.tileScale = tileScale
+    this.tSprite.tilePosition = {
+      x: (Screen.width % tileSize) * 0.5,
+      y: (Screen.height % tileSize) * 0.5,
+    }
+  }
 }
 
-const eR = 25
-const eM = { w: eR * 1.5, h: eR * 2 }
-const enemySPs = (offset: Point = new Point()): RoundedPoint[] => {
-  return [
-    [0, -eM.h / 2],
-    [eM.w / 2, eM.h / 2],
-    [0, eM.h / 3],
-    [-eM.w / 2, eM.h / 2],
-  ].map(([x, y]) => ({ x: x! + offset.x, y: y! + offset.y, radius: 2 }))
+export class Player extends Entity {
+  readonly radius = 20
+
+  startPoint!: PointData
+  curves!: BezierCurve[]
+
+  private graphics = new Graphics()
+
+  init(): void {
+    this.tag('player')
+
+    this.startPoint = { x: 0, y: -this.radius }
+    this.curves = createCircleBezierCurves(this.startPoint, this.radius)
+
+    this.addChild(this.graphics)
+
+    this.addComponent(Collider.circle(0, 0, 20), new CollisionSensor(['collectable']))
+  }
+
+  redraw(factor: number): void {
+    const g = this.graphics
+    g.clear()
+
+    this.curves[2]!.p.x = this.curves[2]!.c1.x = this.curves[3]!.c0.x = -this.radius * factor
+    this.curves[2]!.c1.y = (this.radius * CP_LEN) / factor
+    this.curves[3]!.c0.y = (-this.radius * CP_LEN) / factor
+
+    g.moveTo(this.startPoint.x, this.startPoint.y)
+
+    for (const c of this.curves) {
+      g.bezierCurveTo(c.c0.x, c.c0.y, c.c1.x, c.c1.y, c.p.x, c.p.y)
+    }
+    g.stroke({ width: 5, color: Color.Energy })
+  }
 }
 
-export function createEnemy(): Entity {
-  const e = new Entity()
-  e.label = 'enemy'
-  e.addChild(new Graphics().roundShape(enemySPs(), eR).fill(0x000000))
-  e.position.set(200, 200)
+export class Collectable extends Entity {
+  private graphics = new Graphics()
+    .roundPoly(0, 0, 12, 5, 2)
+    .stroke({ width: 3, color: Color.Energy })
 
-  // const pc = e.addComponent(new RigidBody(200, 200))
-  // pc.gravity.set(0, 0)
+  init(): void {
+    this.tag('collectable')
 
-  e.addComponent(Collider.polygon(...enemySPs().flatMap((p) => [p.x, p.y]))).layer =
-    CollisionLayer.Enemy
+    this.addChild(this.graphics)
 
-  return e
+    this.addComponent(Collider.circle(0, 0, 10))
+
+    Tweener.shared
+      .timeline()
+      .to(this.graphics, {
+        pixi: { rotation: 45 },
+        startAt: { pixi: { rotation: -45 } },
+        ease: 'power3.inOut',
+        duration: 1,
+      })
+      .to(this.graphics, { pixi: { rotation: -45 }, ease: 'power3.inOut', duration: 1 })
+      .repeat(-1)
+  }
 }
+
+// const eR = 25
+// const eM = { w: eR * 1.5, h: eR * 2 }
+// const enemySPs = (offset: Point = new Point()): RoundedPoint[] => {
+//   return [
+//     [0, -eM.h / 2],
+//     [eM.w / 2, eM.h / 2],
+//     [0, eM.h / 3],
+//     [-eM.w / 2, eM.h / 2],
+//   ].map(([x, y]) => ({ x: x! + offset.x, y: y! + offset.y, radius: 2 }))
+// }
+
+// export function createEnemy(): Entity {
+//   const e = new Entity()
+//   e.label = 'enemy'
+//   e.addChild(new Graphics().roundShape(enemySPs(), eR).fill(0x000000))
+//   e.position.set(200, 200)
+
+//   // const pc = e.addComponent(new RigidBody(200, 200))
+//   // pc.gravity.set(0, 0)
+
+//   e.addComponent(Collider.polygon(...enemySPs().flatMap((p) => [p.x, p.y]))).layer =
+//     CollisionLayer.Enemy
+
+//   return e
+// }

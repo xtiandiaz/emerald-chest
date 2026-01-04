@@ -1,59 +1,45 @@
-import { Container, FederatedPointerEvent, Graphics, Point } from 'pixi.js'
+import { FederatedPointerEvent, Point, Rectangle } from 'pixi.js'
 import '@/assets/emerald/extensions/pixi.extensions'
 import 'pixi.js/math-extras'
 import {
-  CollisionSignal,
   connectContainerEvent,
-  connectDocumentEvent,
   Screen,
-  Entity,
-  HUD,
-  RigidBody,
+  Body,
   System,
   World,
   clamp,
-  Direction,
-  Vector,
-  directionVector,
   sign,
-  Collider,
-  ColliderShape,
-  Tweener,
+  ScreenResized,
   type SignalBus,
-  ScreenResizeSignal,
 } from '@/assets/emerald'
 import { ItemCollected } from './signals'
-import { CollisionLayer, Color } from './types'
-import { GridSkin, PlayerSkin } from './components'
+import { Collectable, Grid, Player } from './entities'
+import { CollisionSensor } from '@/assets/emerald/components/CollisionSensor'
 
 export class Resizing extends System {
-  init(world: World, hud: HUD, sb: SignalBus): void {
-    this.connections.push(sb.connect(ScreenResizeSignal, (s) => this.resize(world)))
+  init(world: World, signalBus: SignalBus): void {
+    this.connections.push(signalBus.connect(ScreenResized, (_) => this.resize(world)))
 
     this.resize(world)
   }
 
   private resize(world: World) {
-    const grid = world.getEntitiesByTag('grid')![0]!
-    grid.width = Screen.width
-    grid.height = Screen.height
-    grid.getComponent(GridSkin)!.scale()
+    world.getEntityByType(Grid)!.resize()
   }
 }
 
-export class PlayerSkinning extends System {
-  private player!: Entity
+export class PlayerMorphing extends System {
+  private player!: Player
   private prevPos!: Point
   private tailElongFactor = 1
 
-  init(world: World, hud: HUD, sb: SignalBus): void {
-    this.player = world.getEntitiesByTag('player')![0]!
+  init(world: World, signalBus: SignalBus): void {
+    this.player = world.getEntityByType(Player)!
 
     this.prevPos = this.player.position.clone()
   }
 
   update(world: World, sb: SignalBus, dt: number): void {
-    const skin = this.player.getComponent(PlayerSkin)!
     const nextElongFactor = clamp(
       this.player.position.subtract(this.prevPos).magnitudeSquared() / (5 * 5),
       1,
@@ -61,49 +47,39 @@ export class PlayerSkinning extends System {
     )
     this.tailElongFactor += (nextElongFactor - this.tailElongFactor) / 6
 
-    skin.redraw(this.tailElongFactor)
+    this.player.redraw(this.tailElongFactor)
 
     this.prevPos.copyFrom(this.player.position)
   }
 }
 
 export class CollectablesSystem extends System {
-  init(world: World, hud: HUD, sb: SignalBus): void {
-    sb.connect(CollisionSignal, (s) => {
-      if (world.getEntity(s.collidedId)?.tag == 'collectable') {
-        world.removeEntity(s.collidedId)
+  private sensor!: CollisionSensor
 
-        sb.emit(new ItemCollected(1))
+  init(world: World, signalBus: SignalBus): void {
+    this.sensor = world.getEntityByType(Player)!.getComponent(CollisionSensor)!
+    this.placeNewCollectable(world)
+  }
 
-        this.placeNewCollectable(world)
-      }
-    })
+  update(world: World, signalBus: SignalBus, dT: number): void {
+    if (this.sensor.collidedIds.size == 0) {
+      return
+    }
+    this.sensor.collidedIds.forEach((id) => world.removeEntity(id))
+
+    signalBus.emit(new ItemCollected(1))
 
     this.placeNewCollectable(world)
   }
 
   private placeNewCollectable(world: World) {
     const screenPadding = 50
-    const co = world
-      .createEntity('collectable')
-      .addComponent(new Collider(ColliderShape.circle(0, 0, 10), CollisionLayer.Collectable))
-
-    co.addChild(new Graphics().roundPoly(0, 0, 12, 5, 2).stroke({ width: 3, color: Color.Energy }))
-    co.position.set(
-      screenPadding + Math.random() * (Screen.width - 2 * screenPadding),
-      screenPadding + Math.random() * (Screen.height - 2 * screenPadding),
-    )
-
-    Tweener.shared
-      .timeline()
-      .to(co, {
-        pixi: { rotation: 45 },
-        startAt: { pixi: { rotation: -45 } },
-        ease: 'power3.inOut',
-        duration: 1,
-      })
-      .to(co, { pixi: { rotation: -45 }, ease: 'power3.inOut', duration: 1 })
-      .repeat(-1)
+    world
+      .createEntity(Collectable)
+      .position.set(
+        screenPadding + Math.random() * (Screen.width - 2 * screenPadding),
+        screenPadding + Math.random() * (Screen.height - 2 * screenPadding),
+      )
   }
 }
 
@@ -114,21 +90,20 @@ interface PlayerControlState {
 }
 
 export class PlayerControlSystem extends System {
-  private player!: Entity
+  private player!: Player
   private state?: PlayerControlState
 
-  init(world: World, hud: HUD, sb: SignalBus): void {
-    hud.eventMode = 'static'
+  init(world: World, signalBus: SignalBus): void {
+    world.eventMode = 'static'
+    world.hitArea = new Rectangle(0, 0, Screen.width, Screen.height)
 
-    this.player = world.getEntitiesByTag('player')![0]!
+    this.player = world.getEntityByType(Player)!
     this.player.position.set(Screen.width / 2, Screen.height / 2)
 
     this.connections.push(
-      connectContainerEvent('pointerdown', hud, (e) => this.handlePointerInput(e)),
-      connectContainerEvent('globalpointermove', hud, (e) => this.handlePointerInput(e)),
-      connectContainerEvent('pointerup', hud, (e) => this.handlePointerInput(e)),
-
-      connectDocumentEvent('keydown', (e) => this.handleKeyboardInput(e, world)),
+      connectContainerEvent('pointerdown', world, (e) => this.handlePointerInput(e)),
+      connectContainerEvent('globalpointermove', world, (e) => this.handlePointerInput(e)),
+      connectContainerEvent('pointerup', world, (e) => this.handlePointerInput(e)),
     )
   }
 
@@ -137,11 +112,13 @@ export class PlayerControlSystem extends System {
       return
     }
     const nextPos = this.player.position.add(
-      this.state.playerTargetPos.subtract(this.player.position).divideByScalar(6),
+      this.state.playerTargetPos.subtract(this.player).divideByScalar(6),
     )
-    nextPos.x = clamp(nextPos.x, 0, Screen.width)
-    nextPos.y = clamp(nextPos.y, 0, Screen.height)
-    const deltaPos = nextPos.subtract(this.player.position)
+    const padding = this.player.radius
+    // TODO make rectangle and inset by radius of player
+    nextPos.x = clamp(nextPos.x, padding, Screen.width - padding)
+    nextPos.y = clamp(nextPos.y, padding, Screen.height - padding)
+    const deltaPos = nextPos.subtract(this.player)
 
     this.player.position.copyFrom(nextPos)
 
@@ -181,29 +158,6 @@ export class PlayerControlSystem extends System {
         break
       case 'pointerup':
         this.state!.controlStartPoint = undefined
-        break
-    }
-  }
-
-  private handleKeyboardInput(e: KeyboardEvent, world: World) {
-    const b = world.getEntitiesByTag('player')![0]!.getComponent(RigidBody)
-    const applyForce = (dir: Vector) => {
-      if (b) {
-        b.force?.copyFrom(dir.multiplyScalar(0.1))
-      }
-    }
-    switch (e.key) {
-      case 'ArrowUp':
-        applyForce(directionVector(Direction.Up))
-        break
-      case 'ArrowRight':
-        applyForce(directionVector(Direction.Right))
-        break
-      case 'ArrowDown':
-        applyForce(directionVector(Direction.Down))
-        break
-      case 'ArrowLeft':
-        applyForce(directionVector(Direction.Left))
         break
     }
   }

@@ -1,29 +1,21 @@
-import { Assets, Graphics, Texture } from 'pixi.js'
+import { Assets } from 'pixi.js'
 import {
-  Collider,
-  ColliderShape,
-  CollisionSystem,
   DragGestureTracker,
   GestureKey,
-  GestureSystem,
   GestureTarget,
+  PhysicsSystem,
   Scene,
   World,
 } from '@/assets/emerald'
-import { CollectablesSystem, PlayerControlSystem, PlayerSkinning, Resizing } from './systems'
-import { GridSkin, PlayerSkin } from './components'
-import { CollisionLayer } from './types'
+import { CollectablesSystem, PlayerControlSystem, PlayerMorphing, Resizing } from './systems'
+import { Grid, Player } from './entities'
 
 export class DemoScene extends Scene {
   systems = [
-    new GestureSystem(),
-    new CollisionSystem(
-      new Map([[CollisionLayer.Player, CollisionLayer.Collectable | CollisionLayer.Enemy]]),
-    ),
-    new PlayerSkinning(),
+    new PlayerMorphing(),
+    new Resizing(),
     new PlayerControlSystem(),
     new CollectablesSystem(),
-    new Resizing(),
   ]
   private draggingTracker = new DragGestureTracker()
 
@@ -38,13 +30,9 @@ export class DemoScene extends Scene {
   }
 
   build(world: World): void {
-    world.createEntity('grid').addContainerChildComponent(new GridSkin())
+    world.createEntity(Grid)
 
-    world
-      .createEntity('player')
-      .addContainerChildComponent(new PlayerSkin(20))
-      .addComponent(new Collider(ColliderShape.circle(0, 0, 24), CollisionLayer.Player))
-      .addComponent(new GestureTarget([GestureKey.Drag]))
+    world.createEntity(Player).addComponent(new GestureTarget([GestureKey.Drag]))
   }
 
   deinit(): void {

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SurivView from '@/games/suriv/View.vue'
+import LedView from '@/games/led/View.vue'
 import BirdiesView from '@/games/birdies/View.vue'
 
 const router = createRouter({
@@ -8,6 +9,10 @@ const router = createRouter({
     {
       path: '/suriv',
       component: SurivView,
+    },
+    {
+      path: '/led',
+      component: LedView,
     },
     {
       path: '/birdies',
