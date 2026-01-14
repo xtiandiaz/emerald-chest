@@ -2,19 +2,18 @@ import { FederatedPointerEvent, Point, Rectangle } from 'pixi.js'
 import '@/assets/emerald/extensions/pixi.extensions'
 import 'pixi.js/math-extras'
 import {
-  connectContainerEvent,
   Screen,
-  Body,
   System,
   World,
   clamp,
   sign,
   ScreenResized,
   type SignalBus,
+  Input,
 } from '@/assets/emerald'
-import { ItemCollected } from './signals'
 import { Collectable, Grid, Player } from './entities'
 import { CollisionSensor } from '@/assets/emerald/components/CollisionSensor'
+import { ItemCollected } from './signals'
 
 export class Resizing extends System {
   init(world: World, signalBus: SignalBus): void {
@@ -98,12 +97,11 @@ export class PlayerControlSystem extends System {
     world.hitArea = new Rectangle(0, 0, Screen.width, Screen.height)
 
     this.player = world.getEntityByType(Player)!
-    this.player.position.set(Screen.width / 2, Screen.height / 2)
 
     this.connections.push(
-      connectContainerEvent('pointerdown', world, (e) => this.handlePointerInput(e)),
-      connectContainerEvent('globalpointermove', world, (e) => this.handlePointerInput(e)),
-      connectContainerEvent('pointerup', world, (e) => this.handlePointerInput(e)),
+      Input.connectContainerEvent('pointerdown', world, (e) => this.handlePointerInput(e)),
+      Input.connectContainerEvent('globalpointermove', world, (e) => this.handlePointerInput(e)),
+      Input.connectContainerEvent('pointerup', world, (e) => this.handlePointerInput(e)),
     )
   }
 

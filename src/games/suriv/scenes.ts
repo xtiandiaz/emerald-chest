@@ -1,9 +1,9 @@
 import { Assets } from 'pixi.js'
 import {
+  CollisionSensorSystem,
   DragGestureTracker,
   GestureKey,
   GestureTarget,
-  PhysicsSystem,
   Scene,
   World,
 } from '@/assets/emerald'
@@ -12,11 +12,13 @@ import { Grid, Player } from './entities'
 
 export class DemoScene extends Scene {
   systems = [
+    new CollisionSensorSystem(),
     new PlayerMorphing(),
     new Resizing(),
     new PlayerControlSystem(),
     new CollectablesSystem(),
   ]
+  inputMap = undefined
   private draggingTracker = new DragGestureTracker()
 
   constructor() {
@@ -32,7 +34,7 @@ export class DemoScene extends Scene {
   build(world: World): void {
     world.createEntity(Grid)
 
-    world.createEntity(Player).addComponent(new GestureTarget([GestureKey.Drag]))
+    world.createEntity(Player)
   }
 
   deinit(): void {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 import { game } from './game';
-import { Color } from './values';
+import { Color } from './types'
 
 const viewport = useTemplateRef('viewport')
 const canvas = useTemplateRef('canvas')
@@ -12,8 +12,11 @@ onMounted(async () => {
     // resizeTo: viewport.value!,
     width: 1280,
     height: 720,
-    background: Color.Background,
+    background: Color.BACKGROUND,
     antialias: true,
+    debug: {
+      showsStats: true
+    }
   }, 'demo')
 })
 

@@ -6,6 +6,8 @@ import {
   Tweener,
   type BezierCurve,
   BEZIER_CIRCLE_CP_LENGTH as CP_LEN,
+  GestureTarget,
+  GestureKey,
 } from '@/assets/emerald'
 import { Color } from './values'
 import { CollisionSensor } from '@/assets/emerald/components/CollisionSensor'
@@ -41,7 +43,7 @@ export class Grid extends Entity {
 export class Player extends Entity {
   readonly radius = 20
 
-  startPoint!: PointData
+  curvesStartPoint!: PointData
   curves!: BezierCurve[]
 
   private graphics = new Graphics()
@@ -49,12 +51,16 @@ export class Player extends Entity {
   init(): void {
     this.tag('player')
 
-    this.startPoint = { x: 0, y: -this.radius }
-    this.curves = createCircleBezierCurves(this.startPoint, this.radius)
+    this.curvesStartPoint = { x: 0, y: -this.radius }
+    this.curves = createCircleBezierCurves(this.curvesStartPoint, this.radius)
+    this.position.set(Screen.width / 2, Screen.height / 2)
 
     this.addChild(this.graphics)
 
-    this.addComponent(Collider.circle(0, 0, 20), new CollisionSensor(['collectable']))
+    this.addComponent(
+      new CollisionSensor(Collider.Shape.circle(0, 0, 20)),
+      new GestureTarget([GestureKey.Drag]),
+    )
   }
 
   redraw(factor: number): void {
@@ -65,7 +71,7 @@ export class Player extends Entity {
     this.curves[2]!.c1.y = (this.radius * CP_LEN) / factor
     this.curves[3]!.c0.y = (-this.radius * CP_LEN) / factor
 
-    g.moveTo(this.startPoint.x, this.startPoint.y)
+    g.moveTo(this.curvesStartPoint.x, this.curvesStartPoint.y)
 
     for (const c of this.curves) {
       g.bezierCurveTo(c.c0.x, c.c0.y, c.c1.x, c.c1.y, c.p.x, c.p.y)
@@ -84,7 +90,7 @@ export class Collectable extends Entity {
 
     this.addChild(this.graphics)
 
-    this.addComponent(Collider.circle(0, 0, 10))
+    this.addComponent(new CollisionSensor(Collider.Shape.circle(0, 0, 10)))
 
     Tweener.shared
       .timeline()
