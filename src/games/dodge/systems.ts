@@ -43,20 +43,25 @@ export namespace DodgeSystems {
       ]
     }
 
-    update(stage: Stage<DodgeComponents>): void {
+    update(
+      stage: Stage<DodgeComponents>,
+      toolkit: System.UpdateToolkit<DodgeSignals>,
+      dT: number,
+    ): void {
       const player = stage.getFirstEntityByTag('player')
       if (!this.state || !player) {
         return
       }
       const nextPos = player.position.add(
-        this.state.playerTargetPos.subtract(player).divideByScalar(4),
+        this.state.playerTargetPos.subtract(player).divideByScalar(3),
       )
       const padding = player.getComponent('player-attributes')!.radius
       // TODO make rectangle and inset by radius of player
       nextPos.x = EMath.clamp(nextPos.x, padding, Screen.width - padding)
       nextPos.y = EMath.clamp(nextPos.y, padding, Screen.height - padding)
 
-      player.position.copyFrom(nextPos)
+      player.position.x += (nextPos.x - player.position.x) * 0.75 * dT
+      player.position.y += (nextPos.y - player.position.y) * 0.75 * dT
     }
 
     private handlePointerInput(e: FederatedPointerEvent, player?: Entity<DodgeComponents>) {
