@@ -1,4 +1,4 @@
-import { Assets } from 'pixi.js'
+import { Assets, path } from 'pixi.js'
 import { Collision, PhysicsSystem, Scene } from '@emerald'
 import type { DodgeComponents } from './components'
 import { createBound, createCollectible, createFoe, createPlayer } from './entities'
@@ -29,7 +29,9 @@ export namespace DodgeScenes {
         new DodgeSystems.Difficulty(),
       ])
 
-      Assets.addBundle('all', [{ alias: 'grid', src: '/suriv/textures/grid.png' }])
+      Assets.addBundle('all', [
+        { alias: 'grid', src: `${import.meta.env.BASE_URL}/dodge/grid.png` },
+      ])
     }
 
     deinit(): void {
