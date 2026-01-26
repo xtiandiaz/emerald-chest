@@ -82,8 +82,12 @@ canvas {
 }
 
 #game-over {
-  @include mixins.absolute-center;
+  @include mixins.absolute-cover;
+  background-color: #0c0c18A0;
   color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   text-align: center;
   width: 100%;
 
