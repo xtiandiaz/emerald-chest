@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/gameroom' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/gameroom/dist' : '/',
   plugins: [vue(), vueDevTools()],
   server: {
     port: 5173,
@@ -19,6 +19,7 @@ export default defineConfig({
     preserveSymlinks: true,
   },
   build: {
+    outDir: '../dist',
     sourcemap: true,
   },
 })
