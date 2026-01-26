@@ -19,7 +19,8 @@ export default defineConfig({
     preserveSymlinks: true,
   },
   build: {
-    outDir: '../dist',
-    sourcemap: true,
+    outDir: 'dist',
+    emptyOutDir: true,
+    // sourcemap: true,
   },
 })
