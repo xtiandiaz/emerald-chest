@@ -29,22 +29,21 @@ export namespace DodgeScenes {
         new DodgeSystems.Difficulty(),
       ])
 
-      // Assets.addBundle('all', [{ alias: 'grid', src: '/suriv/textures/grid.png' }])
+      Assets.addBundle('all', [{ alias: 'grid', src: '/suriv/textures/grid.png' }])
     }
 
     deinit(): void {
       super.deinit()
 
-      // Assets.unloadBundle('all')
+      Assets.unloadBundle('all')
     }
 
     async load(): Promise<void> {
-      // await Assets.loadBundle('all')
+      await Assets.loadBundle('all')
     }
 
     build(): void {
-      // const grid = createStaticGrid()
-      // this.addChild(grid)
+      this.addChild(createStaticGrid())
 
       Array<Face>('top', 'right', 'bottom', 'left').forEach((f) => createBound(this, f))
 
