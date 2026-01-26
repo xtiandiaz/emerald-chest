@@ -1,27 +1,30 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
-import { game } from './game';
-import { Color } from './types'
+// import { Game, type GameState } from '@/assets/emerald'
+// import { DemoScene } from './scenes';
 
 const viewport = useTemplateRef('viewport')
 const canvas = useTemplateRef('canvas')
+// let game: Game<GameState> | undefined
 
 onMounted(async () => {
-  await game.init({
-    canvas: canvas.value!,
-    // resizeTo: viewport.value!,
-    width: 1280,
-    height: 720,
-    background: Color.BACKGROUND,
-    antialias: true,
-    debug: {
-      showsStats: true
-    }
-  }, 'demo')
+  // game = new Game({ isPaused: false }, [new DemoScene()])
+
+  // await game.init({
+  //   canvas: canvas.value!,
+  //   // resizeTo: viewport.    value!,
+  //   width: 1280,
+  //   height: 720,
+  //   background: 0x0AC2A3,
+  //   antialias: true,
+  //   // debug: {
+  //   //   showsStats: true
+  //   // }
+  // }, 'demo')
 })
 
 onBeforeUnmount(() => {
-  game.deinit()
+  // game?.deinit()
 })
 </script>
 

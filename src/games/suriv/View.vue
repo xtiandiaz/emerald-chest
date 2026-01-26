@@ -1,30 +1,31 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
-import { Suriv } from './game'
+// import { Suriv } from './game'
 
 const viewport = useTemplateRef<HTMLElement>('viewport')
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
 
 const score = ref(0)
-const game = new Suriv({
-  score: score,
-  isPaused: false
-})
 
 onMounted(async () => {
-  await game.init({
-    backgroundAlpha: 0,
-    canvas: canvas.value!,
-    resizeTo: viewport.value!,
-    antialias: true,
-  })
+  // const game = new Suriv({
+  //   score: score,
+  //   isPaused: false
+  // })
 
-  await game.switchToScene('demo')
+  // await game.init({
+  //   backgroundAlpha: 0,
+  //   canvas: canvas.value!,
+  //   resizeTo: viewport.value!,
+  //   antialias: true,
+  // })
+
+  // await game.switchToScene('demo')
 })
 
-onBeforeUnmount(() => {
-  game.deinit()
-})
+// onBeforeUnmount(() => {
+//   game.deinit()
+// })
 </script>
 
 <template>

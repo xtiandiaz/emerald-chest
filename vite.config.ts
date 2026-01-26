@@ -6,6 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/gameroom' : '/',
   plugins: [vue(), vueDevTools()],
   server: {
     port: 5173,
@@ -13,7 +14,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@emerald': fileURLToPath(new URL('./src/assets/emerald', import.meta.url)),
     },
+    preserveSymlinks: true,
   },
   build: {
     sourcemap: true,

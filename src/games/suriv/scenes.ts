@@ -1,45 +1,46 @@
-import { Assets } from 'pixi.js'
-import {
-  CollisionSensorSystem,
-  DragGestureTracker,
-  GestureKey,
-  GestureTarget,
-  Scene,
-  World,
-} from '@/assets/emerald'
-import { CollectablesSystem, PlayerControlSystem, PlayerMorphing, Resizing } from './systems'
-import { Grid, Player } from './entities'
+// import { Assets } from 'pixi.js'
+// import {
+//   CollisionSensorSystem,
+//   DragGestureTracker,
+//   GestureKey,
+//   GestureTarget,
+//   Scene,
+//   World,
+// } from '@/assets/emerald'
+// import { CollectablesSystem, PlayerControlSystem, PlayerMorphing, Resizing } from './systems'
+// import { Grid, Player } from './entities'
 
-export class DemoScene extends Scene {
-  systems = [
-    new CollisionSensorSystem(),
-    new PlayerMorphing(),
-    new Resizing(),
-    new PlayerControlSystem(),
-    new CollectablesSystem(),
-  ]
-  inputMap = undefined
-  private draggingTracker = new DragGestureTracker()
+// export class DemoScene extends Scene {
+//   systems = [
+//     new CollisionSensorSystem(),
+//     new PlayerMorphing(),
+//     new Resizing(),
 
-  constructor() {
-    super('demo')
-  }
+//     new PlayerControlSystem(),
+//     new CollectablesSystem(),
+//   ]
+//   inputMap = undefined
+//   private draggingTracker = new DragGestureTracker()
 
-  async load(): Promise<void> {
-    Assets.addBundle('all', [{ alias: 'grid', src: '/suriv/textures/grid.png' }])
+//   constructor() {
+//     super('demo')
+//   }
 
-    await Assets.loadBundle('all')
-  }
+//   async load(): Promise<void> {
+//     Assets.addBundle('all', [{ alias: 'grid', src: '/suriv/textures/grid.png' }])
 
-  build(world: World): void {
-    world.createEntity(Grid)
+//     await Assets.loadBundle('all')
+//   }
 
-    world.createEntity(Player)
-  }
+//   build(world: World): void {
+//     world.createEntity(Grid)
 
-  deinit(): void {
-    super.deinit()
+//     world.createEntity(Player)
+//   }
 
-    this.draggingTracker.deinit()
-  }
-}
+//   deinit(): void {
+//     super.deinit()
+
+//     this.draggingTracker.deinit()
+//   }
+// }
