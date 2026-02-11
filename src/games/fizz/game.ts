@@ -1,6 +1,5 @@
 import { Game, type Disconnectable, type Signals } from '@emerald'
-import { DodgeScenes } from './scenes'
-import type { DodgeComponents } from './components'
+import type { FizzComponents } from './components'
 import type { DodgeSignals } from './signals'
 
 export interface DodgeState extends Game.State {
@@ -9,11 +8,7 @@ export interface DodgeState extends Game.State {
   bestScore?: number
 }
 
-export class Dodge extends Game<DodgeComponents, DodgeSignals, DodgeState> {
-  constructor(state: DodgeState) {
-    super([DodgeScenes.Main], state)
-  }
-
+export class Fizz extends Game<FizzComponents, DodgeSignals, DodgeState> {
   connect(signals: Signals.Bus<DodgeSignals>, state: DodgeState): Disconnectable[] {
     return [
       signals.connect('item-collected', (s) => {

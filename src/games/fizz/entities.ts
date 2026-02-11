@@ -7,35 +7,78 @@ import {
   Entity,
   RigidBody,
   Screen,
-  Tweener,
   RayCast,
+  type BezierCurve,
+  BEZIER_CIRCLE_CP_LENGTH as CP_LEN,
+  EMath,
+  Vector,
 } from '@emerald'
-import type { DodgeComponents } from './components'
-import { DodgeCollisionLayer, DodgeColor, type Face } from './types'
+import type { FizzComponents } from './components'
+import { FizzCollisionLayer, FizzColor, type Face } from './types'
+import gsap from 'gsap'
+import { createCircleBezierCurves } from './utils'
 
-export function createPlayer(stage: Stage<DodgeComponents>) {
-  const radius = 16
+export class Player extends Entity<FizzComponents> {
+  readonly radius = 20
 
-  stage
-    .createSimpleEntity({
-      tag: 'player',
-      position: { x: Screen.width / 2, y: Screen.height / 2 },
-      children: [new Graphics().circle(0, 0, radius).fill({ color: DodgeColor.PLAYER })],
-    })
-    .addComponents({
-      'player-attributes': { radius },
-      collider: Collider.circle(radius, {
-        layer: DodgeCollisionLayer.PLAYER,
+  curvesStartPoint!: PointData
+  curves!: BezierCurve[]
+
+  private graphics = new Graphics()
+
+  init(): void {
+    this.tag('player')
+
+    this.curvesStartPoint = { x: 0, y: -this.radius }
+    this.curves = createCircleBezierCurves(this.curvesStartPoint, this.radius)
+    this.position.set(Screen.width / 2, Screen.height / 2)
+
+    this.addChild(this.graphics)
+
+    this.addComponents({
+      collider: Collider.circle(this.radius, {
+        layer: FizzCollisionLayer.PLAYER,
       }),
       'ray-cast': new RayCast([
-        'platform',
-        Collision.ray(new Point(), new Point(0, 1), 200, DodgeCollisionLayer.BOUND),
+        'is-grounded',
+        Collision.ray(new Point(), new Point(0, 1), 200, FizzCollisionLayer.BOUND),
       ]),
+      'player-control-state': {
+        playerPos: {
+          start: this.position.clone(),
+          target: this.position.clone(),
+          delta: new Vector(),
+        },
+      },
     })
+
+    this.draw(1)
+  }
+
+  draw(elongationFactor: number): void {
+    elongationFactor = EMath.clamp(elongationFactor, 1, 2)
+
+    const g = this.graphics
+    g.clear()
+
+    this.curves[2]!.p.x =
+      this.curves[2]!.c1.x =
+      this.curves[3]!.c0.x =
+        -this.radius * elongationFactor
+    this.curves[2]!.c1.y = (this.radius * CP_LEN) / elongationFactor
+    this.curves[3]!.c0.y = (-this.radius * CP_LEN) / elongationFactor
+
+    g.moveTo(this.curvesStartPoint.x, this.curvesStartPoint.y)
+
+    for (const c of this.curves) {
+      g.bezierCurveTo(c.c0.x, c.c0.y, c.c1.x, c.c1.y, c.p.x, c.p.y)
+    }
+    g.stroke({ width: 4, color: FizzColor.PLAYER }).fill({ color: FizzColor.PLAYER, alpha: 0.1 })
+  }
 }
 
-export function createCollectible(stage: Stage<DodgeComponents>) {
-  const radius = 12
+export function createCollectible(stage: Stage<FizzComponents>) {
+  const radius = 16
   const padding = radius * 2
 
   stage
@@ -49,12 +92,12 @@ export function createCollectible(stage: Stage<DodgeComponents>) {
       children: [
         new Graphics()
           .roundPoly(0, 0, radius, 5, 4)
-          .fill({ color: DodgeColor.PLAYER, alpha: 0.1 })
-          .stroke({ color: DodgeColor.PLAYER, width: 3 }),
+          .fill({ color: FizzColor.PLAYER, alpha: 0.1 })
+          .stroke({ color: FizzColor.PLAYER, width: 3 }),
       ],
       onInit: (container) => {
-        Tweener.shared.to(container, { vars: { scale: 1 } })
-        Tweener.shared
+        gsap.to(container, { pixi: { scale: 1 } })
+        gsap
           .timeline()
           .to(container, {
             pixi: { rotation: 45 },
@@ -68,13 +111,13 @@ export function createCollectible(stage: Stage<DodgeComponents>) {
     })
     .addComponents({
       collider: Collider.circle(12, {
-        layer: DodgeCollisionLayer.COLLECTIBLE,
+        layer: FizzCollisionLayer.COLLECTIBLE,
       }),
     })
 }
 
-export function createFoe(stage: Stage<DodgeComponents>, edge: number) {
-  const radius = 28
+export function createFoe(stage: Stage<FizzComponents>, edge: number) {
+  const radius = 40
   const padding = -100
   const position: PointData = {
     x: edge % 2 == 0 ? Screen.width / 2 : edge % 4 == 1 ? Screen.width - padding : padding,
@@ -89,42 +132,40 @@ export function createFoe(stage: Stage<DodgeComponents>, edge: number) {
       rotation,
       children: [
         new Graphics()
-          .roundPoly(0, 0, radius, 3, 4, Math.PI / 2)
-          .fill({ color: DodgeColor.FOE, alpha: 0.1 })
-          .stroke({ color: DodgeColor.FOE, width: 4 }),
+          .roundPoly(0, 0, radius, 3, 16, Math.PI / 2)
+          .fill({ color: FizzColor.FOE, alpha: 0.1 })
+          .stroke({ color: FizzColor.FOE, width: 4 }),
       ],
     })
     .addComponents({
-      collider: Collider.regularPolygon(radius, 3, { layer: DodgeCollisionLayer.FOE }),
+      collider: Collider.regularPolygon(radius, 3, { layer: FizzCollisionLayer.FOE }),
       'rigid-body': new RigidBody({
         isKinematic: true,
-        friction: { dynamic: 0 },
-        restitution: 0,
       }),
       'foe-attributes': { radius },
       'foe-state': { linearSpeed: 2, angularSpeed: 0.25, lastShotTimestamp: Date.now() },
       'ray-cast': new RayCast([
         'platform',
-        Collision.ray(new Point(), new Point(0, 1), 200, DodgeCollisionLayer.BOUND),
+        Collision.ray(new Point(), new Point(0, 1), 200, FizzCollisionLayer.BOUND),
       ]),
     })
 }
 
 export function createBullet(
-  stage: Stage<DodgeComponents>,
+  stage: Stage<FizzComponents>,
   position: PointData,
   velocity: VectorData,
-): Entity<DodgeComponents> {
+): Entity<FizzComponents> {
   return stage
     .createSimpleEntity({
       tag: 'bullet',
       position,
       rotation: Math.PI / 4,
-      children: [new Graphics().circle(0, 0, 8).stroke({ color: DodgeColor.FOE, width: 4 })],
+      children: [new Graphics().circle(0, 0, 8).stroke({ color: FizzColor.FOE, width: 4 })],
     })
     .addComponents({
       collider: Collider.circle(8, {
-        layer: DodgeCollisionLayer.BULLET,
+        layer: FizzCollisionLayer.BULLET,
       }),
       'rigid-body': new RigidBody({
         isKinematic: true,
@@ -135,7 +176,7 @@ export function createBullet(
     })
 }
 
-export function createBound(stage: Stage<DodgeComponents>, face: Face) {
+export function createBound(stage: Stage<FizzComponents>, face: Face) {
   type Size = { w: number; h: number }
 
   const thickness = 100
@@ -172,7 +213,7 @@ export function createBound(stage: Stage<DodgeComponents>, face: Face) {
     })
     .addComponents({
       collider: Collider.rectangle(size.w, size.h, {
-        layer: DodgeCollisionLayer.BOUND,
+        layer: FizzCollisionLayer.BOUND,
       }),
       'rigid-body': new RigidBody({
         isStatic: true,

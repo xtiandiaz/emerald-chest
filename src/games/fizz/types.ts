@@ -1,6 +1,6 @@
 export type Face = 'top' | 'right' | 'bottom' | 'left'
 
-export enum DodgeCollisionLayer {
+export enum FizzCollisionLayer {
   PLAYER = 1 << 0,
   COLLECTIBLE = 1 << 1,
   FOE = 1 << 2,
@@ -8,7 +8,7 @@ export enum DodgeCollisionLayer {
   BOUND = 1 << 4,
 }
 
-export enum DodgeColor {
+export enum FizzColor {
   PLAYER = 0x00ff96,
   FOE = 0xff0055,
 }

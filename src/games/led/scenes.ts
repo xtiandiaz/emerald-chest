@@ -15,7 +15,27 @@
 // import type { InputAction } from './types'
 // import { Graphics } from 'pixi.js'
 
-// export class DemoScene extends Scene {
+import { Input, PhysicsSystem, Scene } from '@emerald'
+import type { Bound } from '../types.shared'
+import type { LedComponents } from './components'
+import type { LedSignals } from './signals'
+import { createBound } from '../entities.shared'
+import { createPlayer } from './entities'
+import { ControlsSystem } from './systems'
+import type { LedActions } from './actions'
+
+export class MainScene extends Scene<LedComponents, LedSignals, LedActions> {
+  constructor() {
+    super([new PhysicsSystem(), new ControlsSystem()])
+  }
+
+  build(): void {
+    Array<Bound>('left', 'bottom', 'right').forEach((b) =>
+      createBound(this, b, 1, { restitution: 0 }),
+    )
+    createPlayer(this)
+  }
+}
 //   systems: System[] = [
 //     new PhysicsSystem({ iterations: 8, debug: { rendersCollisions: true } }),
 //     new CollisionSensorSystem({ usesOnlyAABBIntersectionForCollisionDetection: true }),

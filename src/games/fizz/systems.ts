@@ -9,91 +9,96 @@ import {
   Collision,
   EMath,
 } from '@emerald'
-import { createBullet, createCollectible } from './entities'
-import type { DodgeComponents } from './components'
+import { createBullet, createCollectible, Player } from './entities'
+import type { FizzComponents, PlayerControlState } from './components'
 import type { DodgeSignals } from './signals'
-import { DodgeCollisionLayer } from './types'
+import { FizzCollisionLayer } from './types'
 
-export namespace DodgeSystems {
-  const DodgeSystem = System<DodgeComponents, DodgeSignals>
+export namespace FizzSystems {
+  const DodgeSystem = System<FizzComponents, DodgeSignals>
 
-  interface PlayerControlState {
-    playerStartPos: Point
-    playerTargetPos: Point
-    controlStartPoint?: Point
-  }
   export class PlayerControls extends DodgeSystem {
-    private state?: PlayerControlState
+    private player!: Player
+    private state!: PlayerControlState
+    private elongFactor = 1
 
     init(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.InitToolkit<DodgeSignals>,
     ): Disconnectable[] {
-      const player = () => stage.getFirstEntityByTag('player')
+      this.player = stage.getFirstEntityByType(Player)!
+      this.state = this.player.getComponent('player-control-state')!
+
       return [
-        toolkit.input.connectContainerEvent('pointerdown', (e) =>
-          this.handlePointerInput(e, player()),
-        ),
-        toolkit.input.connectContainerEvent('globalpointermove', (e) =>
-          this.handlePointerInput(e, player()),
-        ),
-        toolkit.input.connectContainerEvent('pointerup', (e) =>
-          this.handlePointerInput(e, player()),
-        ),
+        toolkit.input.connectContainerEvent('pointerdown', (e) => this.handlePointerInput(e)),
+        toolkit.input.connectContainerEvent('globalpointermove', (e) => this.handlePointerInput(e)),
+        toolkit.input.connectContainerEvent('pointerup', (e) => this.handlePointerInput(e)),
       ]
     }
 
     update(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.UpdateToolkit<DodgeSignals>,
       dT: number,
     ): void {
-      const player = stage.getFirstEntityByTag('player')
-      if (!this.state || !player) {
-        return
-      }
-      const nextPos = player.position.add(
-        this.state.playerTargetPos.subtract(player).divideByScalar(3),
-      )
-      const padding = player.getComponent('player-attributes')!.radius
-      // TODO make rectangle and inset by radius of player
-      nextPos.x = EMath.clamp(nextPos.x, padding, Screen.width - padding)
-      nextPos.y = EMath.clamp(nextPos.y, padding, Screen.height - padding)
+      const ease = 0.1 * dT
+      const deltaPos = this.state.playerPos.target.subtract(this.player.position)
+      this.player.position.x += deltaPos.x * ease
+      this.player.position.y += deltaPos.y * ease
 
-      player.position.x += (nextPos.x - player.position.x) * 0.75 * dT
-      player.position.y += (nextPos.y - player.position.y) * 0.75 * dT
+      let nextRot: number
+      if (this.state.playerPos.delta.x == 0) {
+        nextRot = EMath.sign(this.state.playerPos.delta.y) * Math.PI * 0.5
+      } else {
+        nextRot =
+          Math.atan(this.state.playerPos.delta.y / this.state.playerPos.delta.x) +
+          (this.state.playerPos.delta.x < 0 ? Math.PI : 0)
+      }
+      this.player.rotation = nextRot
+
+      const nextElongFactor = deltaPos.magnitude() / 50
+      this.elongFactor += (nextElongFactor - this.elongFactor) * ease
+      this.player.draw(this.elongFactor)
     }
 
-    private handlePointerInput(e: FederatedPointerEvent, player?: Entity<DodgeComponents>) {
-      if (!player) {
-        return
-      }
+    // TODO Refactor all this into a kind of 'movement state machine'!!
+
+    private handlePointerInput(e: FederatedPointerEvent) {
       switch (e.type) {
         case 'pointerdown':
-          this.state = {
-            controlStartPoint: e.global.clone(),
-            playerStartPos: player.position.clone(),
-            playerTargetPos: player.position.clone(),
-          }
+          this.state.playerPos.start.copyFrom(this.player.position)
+          this.state.playerPos.target.copyFrom(this.player.position)
+          this.state.playerPos.delta.set(0, 0)
+          this.state.controlStartPoint = e.global.clone()
           break
+
         case 'pointermove':
-          if (!this.state?.controlStartPoint) {
+          if (!this.state.controlStartPoint) {
             break
           }
-          const dPos = e.global.subtract(this.state.controlStartPoint).multiplyScalar(3)
-          const tPos = this.state.playerStartPos.add(dPos)
-          if (tPos.x <= 0 || tPos.x >= Screen.width) {
-            this.state.controlStartPoint!.x = e.globalX
-            this.state.playerStartPos.x = EMath.clamp(tPos.x, 0, Screen.width)
+          const scaledDeltaPos = e.global.subtract(this.state.controlStartPoint).multiplyScalar(3)
+          const targetPos = this.state.playerPos.start.add(scaledDeltaPos)
+          if (targetPos.x <= 0 || targetPos.x >= Screen.width) {
+            this.state.controlStartPoint.x = e.globalX
+            this.state.playerPos.start.x = EMath.clamp(targetPos.x, 0, Screen.width)
           }
-          if (tPos.y <= 0 || tPos.y >= Screen.height) {
+          if (targetPos.y <= 0 || targetPos.y >= Screen.height) {
             this.state.controlStartPoint!.y = e.globalY
-            this.state.playerStartPos.y = EMath.clamp(tPos.y, 0, Screen.height)
+            this.state.playerPos.start.y = EMath.clamp(targetPos.y, 0, Screen.height)
           }
-          this.state.playerTargetPos.set(tPos.x, tPos.y)
+
+          const padding = this.player.radius
+
+          this.state.playerPos.target.set(
+            EMath.clamp(targetPos.x, padding, Screen.width - padding),
+            EMath.clamp(targetPos.y, padding, Screen.height - padding),
+          )
+
+          this.state.playerPos.target.subtract(this.player.position, this.state.playerPos.delta)
           break
+
         case 'pointerup':
-          this.state!.controlStartPoint = undefined
+          this.state.controlStartPoint = undefined
           break
       }
     }
@@ -101,7 +106,7 @@ export namespace DodgeSystems {
 
   export class Spawning extends DodgeSystem {
     init(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.InitToolkit<DodgeSignals>,
     ): Disconnectable[] {
       return [
@@ -114,7 +119,7 @@ export namespace DodgeSystems {
 
   export class Chasing extends DodgeSystem {
     fixedUpdate(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.UpdateToolkit<DodgeSignals>,
       dT: number,
     ): void {
@@ -157,7 +162,7 @@ export namespace DodgeSystems {
 
   export class Shooting extends DodgeSystem {
     fixedUpdate(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.UpdateToolkit<DodgeSignals>,
       dT: number,
     ): void {
@@ -175,7 +180,7 @@ export namespace DodgeSystems {
         foe.position,
         body.direction,
         Screen.width * 0.5,
-        DodgeCollisionLayer.PLAYER,
+        FizzCollisionLayer.PLAYER,
       )
       const radius = foe.getComponent('foe-attributes')!.radius
       if (toolkit.rayCaster.cast(ray)) {
@@ -191,7 +196,7 @@ export namespace DodgeSystems {
 
   export class Interaction extends DodgeSystem {
     fixedUpdate(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.UpdateToolkit<DodgeSignals>,
       dT: number,
     ): void {
@@ -199,8 +204,8 @@ export namespace DodgeSystems {
       if (!playerId) {
         return
       }
-      const sensor = stage.getComponent('collider', playerId)
-      sensor?.contacts.forEach((_, colliderId) => {
+      const playerCollider = stage.getComponent('collider', playerId)
+      playerCollider?.collisions.forEach((_, colliderId) => {
         switch (stage.getEntityTag(colliderId)) {
           case 'collectible':
             stage.removeEntity(colliderId)
@@ -217,7 +222,7 @@ export namespace DodgeSystems {
 
   export class Difficulty extends DodgeSystem {
     init(
-      stage: Stage<DodgeComponents>,
+      stage: Stage<FizzComponents>,
       toolkit: System.InitToolkit<DodgeSignals>,
     ): Disconnectable[] {
       return [

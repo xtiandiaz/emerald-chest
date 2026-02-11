@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
-import { DodgeScenes } from './scenes';
-import { Dodge, type DodgeState } from './game'
+import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import { MainScene } from './scenes';
+import { Fizz, type DodgeState } from './game'
 
 const viewport = useTemplateRef<HTMLDivElement>('viewport')
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
 const state = ref<DodgeState>({ isPaused: false, isOver: false, score: 0, bestScore: 0 })
-const game = new Dodge(state.value)
+const game = new Fizz(state.value)
 
 async function playAgain() {
   state.value.score = 0
   state.value.isOver = false
 
-  await game.play(DodgeScenes.Main)
+  await game.playScene(MainScene)
 }
 
 onMounted(async () => {
@@ -23,13 +23,17 @@ onMounted(async () => {
     resizeTo: viewport.value!,
   })
 
-  await game.play(DodgeScenes.Main)
+  await game.playScene(MainScene)
 })
 
 watch(() => state.value.isOver, (isOver) => {
   if (isOver) {
     state.value.bestScore = Math.max(state.value.bestScore ?? 0, state.value.score)
   }
+})
+
+onUnmounted(() => {
+  game.destroy()
 })
 </script>
 
@@ -38,7 +42,7 @@ watch(() => state.value.isOver, (isOver) => {
     <div id="score">{{ state.score }}</div>
     <canvas ref="canvas"></canvas>
     <div id="game-over" v-if="state.isOver">
-      <h1 v-if="state.bestScore">Best <span id="best-score">{{ state.bestScore }}</span></h1>
+      <!-- <h1 v-if="state.bestScore">Best <span id="best-score">{{ state.bestScore }}</span></h1> -->
       <button @click="async () => await playAgain()">
         <label>Play again</label>
       </button>
@@ -72,7 +76,7 @@ canvas {
   @include mixins.absolute-center;
   @include player-color;
   font-family: 'Inter SemiBold';
-  font-size: 16rem;
+  font-size: 20rem;
   opacity: 0.1;
 }
 

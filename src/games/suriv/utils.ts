@@ -1,5 +1,5 @@
 import type { PointData } from 'pixi.js'
-import { BEZIER_CIRCLE_CP_LENGTH as CP_LEN } from '@/assets/emerald'
+import { BEZIER_CIRCLE_CP_LENGTH as CP_LEN } from '@emerald'
 
 export function createCircleBezierCurves(startPoint: PointData, radius: number) {
   return [

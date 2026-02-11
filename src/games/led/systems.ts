@@ -1,19 +1,29 @@
-// import {
-//   Body,
-//   System,
-//   World,
-//   Collider,
-//   Input,
-//   CollisionSensor,
-//   Randomness,
-//   Vector,
-//   type SignalBus,
-//   isNearlyEqual,
-//   Physics,
-//   ExtraMath,
-// } from '@/assets/emerald'
+import {
+  Input,
+  Stage,
+  //   Body,
+  System,
+  Vector,
+  type Disconnectable,
+  //   World,
+  //   Collider,
+  //   Input,
+  //   CollisionSensor,
+  //   Randomness,
+  //   Vector,
+  //   type SignalBus,
+  //   isNearlyEqual,
+  //   Physics,
+  //   ExtraMath,
+} from '@emerald'
+import type { LedComponents } from './components'
+import type { LedSignals } from './signals'
+import type { LedActions } from './actions'
+import type { FederatedPointerEvent } from 'pixi.js'
 // import { type PointData } from 'pixi.js'
 // import { InputAction } from './types'
+
+const LedSystem = System<LedComponents, LedSignals, LedActions>
 
 // export class BodyDumpSystem extends System {
 //   fixedUpdate(world: World, signalBus: SignalBus, dT: number): void {
@@ -29,7 +39,80 @@
 //   _speed: number
 //   _isGrounded: boolean
 // }
-// export class ControlSystem extends System {
+export class ControlsSystem extends LedSystem {
+  targetVelocity = new Vector()
+
+  init(stage: Stage<LedComponents>, toolkit: System.InitToolkit<LedSignals>): Disconnectable[] {
+    const player = stage.getFirstEntityByTag('player')!
+    const playerBody = player?.getComponent('rigid-body')!
+    const playerRayCast = player.getComponent('ray-cast')!
+    return [
+      toolkit.input.connectDocumentEvent('keydown', (e) => {
+        if (!playerBody) return
+        switch (e.code) {
+          case 'Space':
+            if (!e.repeat && playerRayCast?.casts.get('is-grounded')) {
+              // TODO apply a force completely ignoring the opposite gravity
+              playerBody.applyForce({ x: 0, y: -25 })
+            }
+            break
+        }
+      }),
+      toolkit.input.connectDocumentEvent('keydown', (e) => {
+        switch (e.code) {
+          case 'ArrowRight':
+            this.targetVelocity.x = 10
+            break
+          case 'ArrowLeft':
+            this.targetVelocity.x = -10
+            break
+        }
+      }),
+      toolkit.input.connectDocumentEvent('keyup', (e) => {
+        switch (e.code) {
+          case 'ArrowRight':
+          case 'ArrowLeft':
+            this.targetVelocity.x = 0
+            break
+        }
+      }),
+    ]
+  }
+
+  fixedUpdate(
+    stage: Stage<LedComponents>,
+    toolkit: System.UpdateToolkit<LedSignals>,
+    dT: number,
+  ): void {
+    const player = stage.getFirstEntityByTag('player')!
+    const playerBody = player?.getComponent('rigid-body')!
+    if (playerBody) {
+      playerBody.velocity.x = this.targetVelocity.x
+    }
+  }
+
+  // onInput(signal: Input.Signal<'jump' | 'move'>, stage: Stage<LedComponents>): void {
+  //   const player = stage.getFirstEntityByTag('player')
+  //   if (!player) return
+  //   const playerBody = player.getComponent('rigid-body')!
+  //   const playerRayCast = player.getComponent('ray-cast')!
+  //   switch (signal.action) {
+  //     case 'jump':
+  //       if (playerRayCast?.casts.get('is-grounded')) {
+  //         // TODO apply a force completely ignoring the opposite gravity
+  //         playerBody.applyForce({ x: 0, y: -25 })
+  //       }
+  //   }
+  // }
+  // fixedUpdate(
+  //   stage: Stage<LedComponents>,
+  //   toolkit: System.UpdateToolkit<LedSignals>,
+  //   dT: number,
+  // ): void {
+  //   const playerRayCast = this.player!.getComponent('ray-cast')
+  //   console.log(playerRayCast?.casts.get('is-grounded'))
+  // }
+}
 //   player!: Body
 //   state: PlayerState = { targetSpeed: 0, _speed: 0, _isGrounded: false }
 

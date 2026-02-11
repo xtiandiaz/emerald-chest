@@ -1,42 +1,54 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
-// import { Game, type GameState } from '@/assets/emerald'
-// import { DemoScene } from './scenes';
+import { onMounted, useTemplateRef, onUnmounted, ref } from 'vue';
+import { MainScene } from './scenes';
+import { Led, type LedState } from './game';
 
-const viewport = useTemplateRef('viewport')
-const canvas = useTemplateRef('canvas')
-// let game: Game<GameState> | undefined
+const viewport = useTemplateRef<HTMLDivElement>('viewport')
+const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
+const state = ref<LedState>({ isPaused: false })
+const game = new Led(state.value)
 
 onMounted(async () => {
-  // game = new Game({ isPaused: false }, [new DemoScene()])
+  await game.init({
+    antialias: true,
+    backgroundAlpha: 0,
+    canvas: canvas.value!,
+    resizeTo: viewport.value!,
+  })
 
-  // await game.init({
-  //   canvas: canvas.value!,
-  //   // resizeTo: viewport.    value!,
-  //   width: 1280,
-  //   height: 720,
-  //   background: 0x0AC2A3,
-  //   antialias: true,
-  //   // debug: {
-  //   //   showsStats: true
-  //   // }
-  // }, 'demo')
+  await game.playScene(MainScene)
 })
 
-onBeforeUnmount(() => {
-  // game?.deinit()
+onUnmounted(() => {
+  game.destroy()
 })
 </script>
 
 <template>
-  <div ref="viewport" id="viewport">
+  <div id="viewport" ref="viewport">
     <canvas ref="canvas"></canvas>
   </div>
 </template>
 
 <style lang="scss" scoped>
-canvas {
-  aspect-ratio: 16 / 9;
+@use '@/assets/design-tokens/typography';
+@use '@/assets/styles/mixins';
+
+@mixin player-color {
+  & {
+    color: #00ff96;
+  }
+}
+
+#viewport {
+  background-color: #0c0c18;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
   width: 100vw;
+}
+
+canvas {
+  @include mixins.absolute-cover;
 }
 </style>
