@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/gameroom/dist' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/emerald-chest/dist' : '/',
   plugins: [vue()],
   server: {
     port: 5173,

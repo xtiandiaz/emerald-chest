@@ -1,22 +1,23 @@
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import FizzView from '@/games/fizz/View.vue'
 import LedView from '@/games/led/View.vue'
-import BirdiesView from '@/games/birdies/View.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      redirect: 'led',
+    },
+    {
+      name: 'fizz',
       path: '/fizz',
       component: FizzView,
     },
     {
+      name: 'led',
       path: '/led',
       component: LedView,
-    },
-    {
-      path: '/birdies',
-      component: BirdiesView,
     },
   ],
 })
