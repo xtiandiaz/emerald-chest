@@ -1,7 +1,6 @@
-# Game Room
+# Emerald Chest
 
-A bunch of random game prototypes made and shared for fun... WEIP (Work Ever in Progress).
+A collection of gems (i.e., rough game prototypes) made with the [Emerald](https://github.com/xtiandiaz/emerald) framework.
 
-## Game Ideas
-
-### Blob-plop
+- Fizz
+- LED
