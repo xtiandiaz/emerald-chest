@@ -18,12 +18,11 @@ import {
 } from '@emerald'
 import type { LedComponents } from './components'
 import type { LedSignals } from './signals'
-import type { LedActions } from './actions'
 import type { FederatedPointerEvent } from 'pixi.js'
 // import { type PointData } from 'pixi.js'
 // import { InputAction } from './types'
 
-const LedSystem = System<LedComponents, LedSignals, LedActions>
+const LedSystem = System<LedComponents, LedSignals>
 
 // export class BodyDumpSystem extends System {
 //   fixedUpdate(world: World, signalBus: SignalBus, dT: number): void {
@@ -60,18 +59,18 @@ export class ControlsSystem extends LedSystem {
       }),
       toolkit.input.connectDocumentEvent('keydown', (e) => {
         switch (e.code) {
-          case 'ArrowRight':
-            this.targetVelocity.x = 10
-            break
           case 'ArrowLeft':
             this.targetVelocity.x = -10
+            break
+          case 'ArrowRight':
+            this.targetVelocity.x = 10
             break
         }
       }),
       toolkit.input.connectDocumentEvent('keyup', (e) => {
         switch (e.code) {
-          case 'ArrowRight':
           case 'ArrowLeft':
+          case 'ArrowRight':
             this.targetVelocity.x = 0
             break
         }

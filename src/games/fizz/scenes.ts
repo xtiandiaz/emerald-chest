@@ -1,10 +1,11 @@
 import { Assets } from 'pixi.js'
 import { Collision, PhysicsSystem, Scene } from '@emerald'
 import type { FizzComponents } from './components'
-import { createBound, createCollectible, createFoe, Player } from './entities'
+import { createCollectible, createFoe, Player } from './entities'
+import { createBounds } from '../entities.shared'
 import { FizzSystems } from './systems'
 import type { DodgeSignals } from './signals'
-import { FizzCollisionLayer, type Face } from './types'
+import { FizzCollisionLayer } from './types'
 import { createStaticGrid } from './utils'
 
 const collisionLayerMap: Collision.LayerMap = new Map([
@@ -44,7 +45,10 @@ export class MainScene extends Scene<FizzComponents, DodgeSignals> {
   build(): void {
     this.addChild(createStaticGrid())
 
-    Array<Face>('top', 'right', 'bottom', 'left').forEach((f) => createBound(this, f))
+    createBounds(this.boundsArea, FizzCollisionLayer.BOUND, this, {
+      restitution: 0,
+      friction: { static: 0, dynamic: 0 },
+    })
 
     this.createEntity(Player)
     createFoe(this, 2)

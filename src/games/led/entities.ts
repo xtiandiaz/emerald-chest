@@ -1,10 +1,11 @@
-import { type Stage, Collider, Collision, RayCast, RigidBody, Screen } from '@emerald'
+import { type Stage, Camera, Collider, Collision, RayCast, RigidBody, Screen } from '@emerald'
 import type { LedComponents } from './components'
 import { Graphics, Point } from 'pixi.js'
 import { LedCollisionLayer } from './types'
 
 export function createPlayer(stage: Stage<LedComponents>) {
   const radius = 32
+
   return stage
     .createSimpleEntity({
       tag: 'player',
@@ -18,5 +19,10 @@ export function createPlayer(stage: Stage<LedComponents>) {
         'is-grounded',
         Collision.ray(new Point(), { x: 0, y: 1 }, radius * 1.5, LedCollisionLayer.PLATFORMS),
       ]),
+      camera: new Camera({
+        isCurrent: true,
+        offset: { x: 0, y: -Screen.height * 0.25 },
+        positionEase: 5,
+      }),
     })
 }

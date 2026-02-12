@@ -1,51 +1,48 @@
-import { Graphics, Point, type PointData, type Size } from 'pixi.js'
+import { Graphics, Point, Rectangle, type PointData, type Size } from 'pixi.js'
 import { Collider, RigidBody, Stage, Screen, type Components } from '@emerald'
-import type { Bound } from './types.shared'
 
-export function createBound<C extends Components>(
-  stage: Stage<C>,
-  bound: Bound,
+export function createBounds<C extends Components>(
+  bounds: Rectangle,
   layer: number,
+  stage: Stage<C>,
   rigidBodyOptions?: Partial<RigidBody.Options>,
 ) {
   const thickness = 100
-  const [position, size] = ((): [PointData, Size] => {
-    switch (bound) {
-      case 'top':
-        return [
-          new Point(Screen.width / 2, -thickness / 2),
-          { width: Screen.width + thickness * 2, height: thickness },
-        ]
-      case 'right':
-        return [
-          new Point(Screen.width + thickness / 2, Screen.height / 2),
-          { width: thickness, height: Screen.height },
-        ]
-      case 'bottom':
-        return [
-          new Point(Screen.width / 2, Screen.height + thickness / 2),
-          { width: Screen.width + thickness * 2, height: thickness },
-        ]
-      case 'left':
-        return [
-          new Point(-thickness / 2, Screen.height / 2),
-          { width: thickness, height: Screen.height },
-        ]
-    }
-  })()
+  const positionAndSizes: [PointData, Size][] = [
+    [
+      { x: bounds.left + bounds.width / 2, y: bounds.top - thickness / 2 },
+      { width: bounds.width + thickness * 2, height: thickness },
+    ],
+    [
+      { x: bounds.right + thickness / 2, y: bounds.height / 2 },
+      { width: thickness, height: bounds.height },
+    ],
+    [
+      { x: bounds.left + bounds.width / 2, y: bounds.bottom + thickness / 2 },
+      { width: bounds.width + thickness * 2, height: thickness },
+    ],
+    [
+      { x: bounds.left - thickness / 2, y: bounds.height / 2 },
+      { width: thickness, height: bounds.height },
+    ],
+  ]
+  positionAndSizes.forEach(([pos, size]) => createBound(pos, size, layer, stage, rigidBodyOptions))
+}
 
+export function createBound<C extends Components>(
+  position: PointData,
+  size: Size,
+  layer: number,
+  stage: Stage<C>,
+  rigidBodyOptions?: Partial<RigidBody.Options>,
+) {
   stage
     .createSimpleEntity({
       tag: 'bound',
       position,
       children: [
         new Graphics()
-          .rect(
-            position.x + -size.width / 2,
-            position.y + -size.height / 2,
-            size.width,
-            size.height,
-          )
+          .rect(-size.width / 2, -size.height / 2, size.width, size.height)
           .fill({ color: 0xffffff }),
       ],
     })

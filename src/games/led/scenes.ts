@@ -15,24 +15,25 @@
 // import type { InputAction } from './types'
 // import { Graphics } from 'pixi.js'
 
-import { Input, PhysicsSystem, Scene } from '@emerald'
-import type { Bound } from '../types.shared'
+import { CameraSystem, Input, PhysicsSystem, Scene, Screen } from '@emerald'
 import type { LedComponents } from './components'
 import type { LedSignals } from './signals'
-import { createBound } from '../entities.shared'
+import { createBounds } from '../entities.shared'
 import { createPlayer } from './entities'
 import { ControlsSystem } from './systems'
-import type { LedActions } from './actions'
+import { Rectangle } from 'pixi.js'
 
-export class MainScene extends Scene<LedComponents, LedSignals, LedActions> {
+export class MainScene extends Scene<LedComponents, LedSignals> {
   constructor() {
-    super([new PhysicsSystem(), new ControlsSystem()])
+    super([new PhysicsSystem(), new ControlsSystem(), new CameraSystem()], {
+      bounds: new Rectangle(0, 0, Screen.width * 1.5, Screen.height * 2),
+    })
   }
 
   build(): void {
-    Array<Bound>('left', 'bottom', 'right').forEach((b) =>
-      createBound(this, b, 1, { restitution: 0 }),
-    )
+    createBounds(this.boundsArea, 1, this, {
+      restitution: 0,
+    })
     createPlayer(this)
   }
 }

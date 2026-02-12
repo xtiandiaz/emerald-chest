@@ -227,7 +227,7 @@ export namespace FizzSystems {
     ): Disconnectable[] {
       return [
         toolkit.signals.connect('item-collected', (_) => {
-          stage.getComponents('foe-state').forEach((fs) => {
+          stage.getEntityComponents('foe-state').forEach(([_, fs]) => {
             fs.linearSpeed += 0.1
             fs.angularSpeed += 0.01
           })
