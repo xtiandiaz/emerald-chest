@@ -29,7 +29,7 @@ export class MainScene extends Scene<FizzComponents, DodgeSignals> {
       new FizzSystems.Difficulty(),
     ])
 
-    Assets.addBundle('all', [{ alias: 'grid', src: `${import.meta.env.BASE_URL}/dodge/grid.png` }])
+    Assets.addBundle('all', [{ alias: 'grid', src: `${import.meta.env.BASE_URL}/fizz/grid.png` }])
   }
 
   deinit(): void {
