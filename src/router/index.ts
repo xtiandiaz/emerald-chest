@@ -7,7 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: 'led',
+      redirect: 'fizz',
     },
     {
       name: 'fizz',

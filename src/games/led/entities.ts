@@ -9,7 +9,7 @@ export function createPlayer(stage: Stage<LedComponents>) {
   return stage
     .createSimpleEntity({
       tag: 'player',
-      position: { x: Screen.width / 2, y: Screen.height / 2 },
+      position: { x: Screen.width, y: Screen.height / 2 },
       children: [new Graphics().circle(0, 0, radius).fill({ color: 0xffffff })],
     })
     .addComponents({
@@ -20,9 +20,9 @@ export function createPlayer(stage: Stage<LedComponents>) {
         Collision.ray(new Point(), { x: 0, y: 1 }, radius * 1.5, LedCollisionLayer.PLATFORMS),
       ]),
       camera: new Camera({
-        isCurrent: true,
         offset: { x: 0, y: -Screen.height * 0.25 },
-        positionEase: 5,
+        speed: 5,
+        zoom: 1,
       }),
     })
 }

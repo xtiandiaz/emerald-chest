@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { MainScene } from './scenes';
-import { Fizz, type DodgeState } from './game'
+import { Fizz, type FizzState } from './game'
 
 const viewport = useTemplateRef<HTMLDivElement>('viewport')
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
-const state = ref<DodgeState>({ isPaused: false, isOver: false, score: 0, bestScore: 0 })
+const state = ref<FizzState>({ isPaused: false, isOver: false, score: 0, bestScore: 0 })
 const game = new Fizz(state.value)
 
 async function playAgain() {

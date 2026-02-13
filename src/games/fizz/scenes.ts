@@ -4,7 +4,7 @@ import type { FizzComponents } from './components'
 import { createCollectible, createFoe, Player } from './entities'
 import { createBounds } from '../entities.shared'
 import { FizzSystems } from './systems'
-import type { DodgeSignals } from './signals'
+import type { FizzSignals } from './signals'
 import { FizzCollisionLayer } from './types'
 import { createStaticGrid } from './utils'
 
@@ -17,7 +17,7 @@ const collisionLayerMap: Collision.LayerMap = new Map([
   ],
 ])
 
-export class MainScene extends Scene<FizzComponents, DodgeSignals> {
+export class MainScene extends Scene<FizzComponents, FizzSignals> {
   constructor() {
     super([
       new PhysicsSystem({ iterations: 1, collisionLayerMap, debug: { rendersColliders: false } }),

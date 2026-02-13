@@ -78,7 +78,7 @@ export class Player extends Entity<FizzComponents> {
 }
 
 export function createCollectible(stage: Stage<FizzComponents>) {
-  const radius = 16
+  const radius = 12
   const padding = radius * 2
 
   stage
@@ -143,7 +143,7 @@ export function createFoe(stage: Stage<FizzComponents>, edge: number) {
         isKinematic: true,
       }),
       'foe-attributes': { radius },
-      'foe-state': { linearSpeed: 2, angularSpeed: 0.25, lastShotTimestamp: Date.now() },
+      'foe-state': { linearSpeed: 2, angularSpeed: 0.5, lastShotTimestamp: Date.now() },
       'ray-cast': new RayCast([
         'platform',
         Collision.ray(new Point(), new Point(0, 1), 200, FizzCollisionLayer.BOUND),

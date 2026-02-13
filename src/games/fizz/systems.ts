@@ -11,21 +11,18 @@ import {
 } from '@emerald'
 import { createBullet, createCollectible, Player } from './entities'
 import type { FizzComponents, PlayerControlState } from './components'
-import type { DodgeSignals } from './signals'
+import type { FizzSignals } from './signals'
 import { FizzCollisionLayer } from './types'
 
 export namespace FizzSystems {
-  const DodgeSystem = System<FizzComponents, DodgeSignals>
+  const DodgeSystem = System<FizzComponents, FizzSignals>
 
   export class PlayerControls extends DodgeSystem {
     private player!: Player
     private state!: PlayerControlState
     private elongFactor = 1
 
-    init(
-      stage: Stage<FizzComponents>,
-      toolkit: System.InitToolkit<DodgeSignals>,
-    ): Disconnectable[] {
+    init(stage: Stage<FizzComponents>, toolkit: System.InitToolkit<FizzSignals>): Disconnectable[] {
       this.player = stage.getFirstEntityByType(Player)!
       this.state = this.player.getComponent('player-control-state')!
 
@@ -38,7 +35,7 @@ export namespace FizzSystems {
 
     update(
       stage: Stage<FizzComponents>,
-      toolkit: System.UpdateToolkit<DodgeSignals>,
+      toolkit: System.UpdateToolkit<FizzSignals>,
       dT: number,
     ): void {
       const ease = 0.1 * dT
@@ -105,10 +102,7 @@ export namespace FizzSystems {
   }
 
   export class Spawning extends DodgeSystem {
-    init(
-      stage: Stage<FizzComponents>,
-      toolkit: System.InitToolkit<DodgeSignals>,
-    ): Disconnectable[] {
+    init(stage: Stage<FizzComponents>, toolkit: System.InitToolkit<FizzSignals>): Disconnectable[] {
       return [
         toolkit.signals.connect('item-collected', () => {
           createCollectible(stage)
@@ -120,7 +114,7 @@ export namespace FizzSystems {
   export class Chasing extends DodgeSystem {
     fixedUpdate(
       stage: Stage<FizzComponents>,
-      toolkit: System.UpdateToolkit<DodgeSignals>,
+      toolkit: System.UpdateToolkit<FizzSignals>,
       dT: number,
     ): void {
       const player = stage.getFirstEntityByTag('player')
@@ -163,7 +157,7 @@ export namespace FizzSystems {
   export class Shooting extends DodgeSystem {
     fixedUpdate(
       stage: Stage<FizzComponents>,
-      toolkit: System.UpdateToolkit<DodgeSignals>,
+      toolkit: System.UpdateToolkit<FizzSignals>,
       dT: number,
     ): void {
       const foe = stage.getFirstEntityByTag('foe')
@@ -197,7 +191,7 @@ export namespace FizzSystems {
   export class Interaction extends DodgeSystem {
     fixedUpdate(
       stage: Stage<FizzComponents>,
-      toolkit: System.UpdateToolkit<DodgeSignals>,
+      toolkit: System.UpdateToolkit<FizzSignals>,
       dT: number,
     ): void {
       const playerId = stage.getFirstEntityByTag('player')?.id
@@ -221,13 +215,10 @@ export namespace FizzSystems {
   }
 
   export class Difficulty extends DodgeSystem {
-    init(
-      stage: Stage<FizzComponents>,
-      toolkit: System.InitToolkit<DodgeSignals>,
-    ): Disconnectable[] {
+    init(stage: Stage<FizzComponents>, toolkit: System.InitToolkit<FizzSignals>): Disconnectable[] {
       return [
         toolkit.signals.connect('item-collected', (_) => {
-          stage.getEntityComponents('foe-state').forEach(([_, fs]) => {
+          stage.getEntityComponents('foe-state').forEach(({ component: fs }) => {
             fs.linearSpeed += 0.1
             fs.angularSpeed += 0.01
           })

@@ -4,6 +4,6 @@ interface ItemCollected extends Signal {
   points: number
 }
 
-export interface DodgeSignals extends Signals {
+export interface FizzSignals extends Signals {
   'item-collected': ItemCollected
 }

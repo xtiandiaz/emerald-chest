@@ -26,7 +26,7 @@ import { Rectangle } from 'pixi.js'
 export class MainScene extends Scene<LedComponents, LedSignals> {
   constructor() {
     super([new PhysicsSystem(), new ControlsSystem(), new CameraSystem()], {
-      bounds: new Rectangle(0, 0, Screen.width * 1.5, Screen.height * 2),
+      bounds: new Rectangle(0, 0, Screen.width * 2, Screen.height * 4),
     })
   }
 
@@ -34,7 +34,9 @@ export class MainScene extends Scene<LedComponents, LedSignals> {
     createBounds(this.boundsArea, 1, this, {
       restitution: 0,
     })
-    createPlayer(this)
+    const player = createPlayer(this)
+
+    this.setCurrentCamera(player.id)
   }
 }
 //   systems: System[] = [

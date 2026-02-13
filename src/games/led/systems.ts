@@ -22,8 +22,6 @@ import type { FederatedPointerEvent } from 'pixi.js'
 // import { type PointData } from 'pixi.js'
 // import { InputAction } from './types'
 
-const LedSystem = System<LedComponents, LedSignals>
-
 // export class BodyDumpSystem extends System {
 //   fixedUpdate(world: World, signalBus: SignalBus, dT: number): void {
 //     const sensors = world.getEntitiesByTag('dump').map((e) => e.getComponent(CollisionSensor)!)
@@ -38,7 +36,7 @@ const LedSystem = System<LedComponents, LedSignals>
 //   _speed: number
 //   _isGrounded: boolean
 // }
-export class ControlsSystem extends LedSystem {
+export class ControlsSystem extends System<LedComponents, LedSignals> {
   targetVelocity = new Vector()
 
   init(stage: Stage<LedComponents>, toolkit: System.InitToolkit<LedSignals>): Disconnectable[] {
@@ -48,12 +46,19 @@ export class ControlsSystem extends LedSystem {
     return [
       toolkit.input.connectDocumentEvent('keydown', (e) => {
         if (!playerBody) return
+
         switch (e.code) {
           case 'Space':
             if (!e.repeat && playerRayCast?.casts.get('is-grounded')) {
               // TODO apply a force completely ignoring the opposite gravity
               playerBody.applyForce({ x: 0, y: -25 })
             }
+            break
+          case 'ArrowUp':
+            player.getComponent('camera')!.zoom += 0.1
+            break
+          case 'ArrowDown':
+            player.getComponent('camera')!.zoom -= 0.1
             break
         }
       }),
