@@ -4,3 +4,5 @@ A collection of gems (i.e., rough game prototypes) made with the [Emerald](https
 
 - [Fizz](/src/games/fizz)
 - [LED](/src/games/led)
+
+Live at: https://xtiandiaz.github.io/emerald-gems
