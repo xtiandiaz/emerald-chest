@@ -1,0 +1,28 @@
+{
+  "frames": {
+    "tree.png": {
+      "frame": { "x": 2, "y": 2, "w": 256, "h": 384 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 256, "h": 384 },
+      "sourceSize": { "w": 256, "h": 384 }
+    },
+    "blob.png": {
+      "frame": { "x": 260, "y": 2, "w": 128, "h": 128 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+      "sourceSize": { "w": 128, "h": 128 }
+    }
+  },
+  "animations": {},
+  "meta": {
+    "app": "http://github.com/pixijs/assetpack",
+    "version": "1.0",
+    "image": "game-2lyy2g@0.5x.png",
+    "format": "RGBA8888",
+    "size": { "w": 390, "h": 388 },
+    "scale": 0.5,
+    "related_multi_packs": []
+  }
+}

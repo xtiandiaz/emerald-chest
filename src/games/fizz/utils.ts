@@ -3,7 +3,7 @@ import { Screen, BEZIER_CIRCLE_CP_LENGTH as CP_LEN } from '@emerald'
 import { FizzColor } from './types'
 
 export function createStaticGrid() {
-  const tSprite = TilingSprite.from('grid')
+  const tSprite = TilingSprite.from('grid.png')
   tSprite.tint = FizzColor.PLAYER
   tSprite.alpha = 0.1
 

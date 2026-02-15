@@ -28,18 +28,16 @@ export class MainScene extends Scene<FizzComponents, FizzSignals> {
       new FizzSystems.Interaction(),
       new FizzSystems.Difficulty(),
     ])
-
-    Assets.addBundle('all', [{ alias: 'grid', src: `${import.meta.env.BASE_URL}/fizz/grid.png` }])
   }
 
-  deinit(): void {
-    super.deinit()
+  async deinit(): Promise<void> {
+    await super.deinit()
 
-    Assets.unloadBundle('all')
+    await Assets.unloadBundle('fizz')
   }
 
   async load(): Promise<void> {
-    await Assets.loadBundle('all')
+    await Assets.loadBundle('fizz')
   }
 
   build(): void {

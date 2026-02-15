@@ -1,5 +1,5 @@
 export enum Color {
-  BACKGROUND = 0x2badee,
+  BACKGROUND = 0x5cd6ad,
 }
 
 export enum LedCollisionLayer {

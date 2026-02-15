@@ -1,0 +1,880 @@
+{
+    "assets": {
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games": {
+            "isFolder": true,
+            "metaData": {},
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1771158173129,
+                "duration": 7.273667000000046,
+                "success": true
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}": {
+            "isFolder": true,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games",
+            "metaData": {
+                "m": true
+            },
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1771158173129,
+                "duration": 6.996208000000024,
+                "success": true
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}": {
+            "isFolder": true,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}",
+            "metaData": {
+                "tps": true
+            },
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1771158173129,
+                "duration": 175.97470800000002,
+                "success": true
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}/grid.png": {
+            "isFolder": false,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {},
+            "hash": "9_3b"
+        },
+        ".assetpack/texture-packer/fizz{m}/game.png": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}",
+            "metaData": {
+                "mIgnore": true,
+                "nomip": true
+            },
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/fizz{m}/game.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/fizz{m}/game-npytfA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/fizz{m}/game.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-npytfA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-npytfA.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/fizz{m}/game.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/fizz{m}/game-YDrKoQ.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/fizz{m}/game.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-YDrKoQ.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-YDrKoQ.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/texture-packer/fizz{m}/game.json": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/fizz{m}/game.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/fizz{m}/game.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/fizz{m}/game.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/fizz{m}/game-ER_RFw.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/fizz{m}/game.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-xiYfVw.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-ER_RFw.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/fizz{m}/game.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/fizz{m}/game.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/fizz{m}/game.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/fizz{m}/game-cNSHOQ.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/fizz{m}/game.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-2C0QYw.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-cNSHOQ.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer/fizz{m}/game@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}",
+            "metaData": {
+                "mIgnore": true,
+                "nomip": true
+            },
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/fizz{m}/game@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/fizz{m}/game-E-i-_w@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/fizz{m}/game@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-E-i-_w@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-E-i-_w@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/fizz{m}/game@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/fizz{m}/game-RSk4KQ@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/fizz{m}/game@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-RSk4KQ@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-RSk4KQ@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/texture-packer/fizz{m}/game@0.5x.json": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/fizz{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/fizz{m}/game@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game@0.5x.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/fizz{m}/game@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/fizz{m}/game@0.5x.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/fizz{m}/game-iRJ8iQ@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/fizz{m}/game@0.5x.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-2eWRUA@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-iRJ8iQ@0.5x.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/fizz{m}/game@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/fizz{m}/game@0.5x.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/fizz{m}/game@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/fizz{m}/game@0.5x.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/fizz{m}/game-Yjb4oA@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/fizz{m}/game@0.5x.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/fizz/game-pmCvIA@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/fizz{m}/game-Yjb4oA@0.5x.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}": {
+            "isFolder": true,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games",
+            "metaData": {
+                "m": true
+            },
+            "inheritedMetaData": {},
+            "transformData": {},
+            "stats": {
+                "date": 1771158173135,
+                "duration": 1.1974579999999833,
+                "success": true
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}": {
+            "isFolder": true,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}",
+            "metaData": {
+                "tps": true
+            },
+            "inheritedMetaData": {
+                "m": true
+            },
+            "transformData": {},
+            "stats": {
+                "date": 1771158173135,
+                "duration": 293.25950000000006,
+                "success": true
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}/blob.png": {
+            "isFolder": false,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {},
+            "hash": "tGjq"
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}/tree.png": {
+            "isFolder": false,
+            "parent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {},
+            "hash": "oTARmQ"
+        },
+        ".assetpack/texture-packer/led{m}/game.png": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}",
+            "metaData": {
+                "mIgnore": true,
+                "nomip": true
+            },
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/led{m}/game.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/led{m}/game-ENRKpA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/led{m}/game.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-ENRKpA.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-ENRKpA.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/led{m}/game.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/led{m}/game-a_86SQ.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/led{m}/game.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-a_86SQ.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-a_86SQ.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/texture-packer/led{m}/game.json": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/led{m}/game.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/led{m}/game.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/led{m}/game.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/led{m}/game-RFXIWQ.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/led{m}/game.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-9dJKgw.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-RFXIWQ.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/led{m}/game.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/led{m}/game.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/led{m}/game.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/led{m}/game-rSPMkA.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/led{m}/game.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-h9FZOQ.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-rSPMkA.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer/led{m}/game@0.5x.png": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}",
+            "metaData": {
+                "mIgnore": true,
+                "nomip": true
+            },
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/led{m}/game@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/led{m}/game-2lyy2g@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/led{m}/game@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-2lyy2g@0.5x.png": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-2lyy2g@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/compress/led{m}/game@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game@0.5x.png",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/cache-buster/led{m}/game-2hMsXA@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/compress/led{m}/game@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-2hMsXA@0.5x.webp": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-2hMsXA@0.5x.webp",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true,
+                "mIgnore": true,
+                "nomip": true
+            },
+            "transformData": {}
+        },
+        ".assetpack/texture-packer/led{m}/game@0.5x.json": {
+            "isFolder": false,
+            "transformParent": "/Users/xtiandiaz/dev/emerald-chest/src/assets/games/led{m}/game{tps}",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/led{m}/game@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game@0.5x.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/led{m}/game@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/led{m}/game@0.5x.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/led{m}/game-VYZilQ@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/led{m}/game@0.5x.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-oONovA@0.5x.png.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-VYZilQ@0.5x.png.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/texture-packer-compress/led{m}/game@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer/led{m}/game@0.5x.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/json/led{m}/game@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/texture-packer-compress/led{m}/game@0.5x.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        ".assetpack/cache-buster/led{m}/game-1Yo-4A@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/json/led{m}/game@0.5x.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        },
+        "/Users/xtiandiaz/dev/emerald-chest/public/assets/led/game-PpobHA@0.5x.webp.json": {
+            "isFolder": false,
+            "transformParent": ".assetpack/cache-buster/led{m}/game-1Yo-4A@0.5x.webp.json",
+            "metaData": {},
+            "inheritedMetaData": {
+                "m": true,
+                "tps": true
+            },
+            "transformData": {
+                "page": 0
+            }
+        }
+    }
+}

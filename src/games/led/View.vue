@@ -2,6 +2,7 @@
 import { onMounted, useTemplateRef, onUnmounted, ref } from 'vue';
 import { MainScene } from './scenes';
 import { Led, type LedState } from './game';
+import { Color } from './types';
 
 const viewport = useTemplateRef<HTMLDivElement>('viewport')
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
@@ -11,7 +12,7 @@ const game = new Led(state.value)
 onMounted(async () => {
   await game.init({
     antialias: true,
-    backgroundAlpha: 0,
+    background: Color.BACKGROUND,
     canvas: canvas.value!,
     resizeTo: viewport.value!,
   })
@@ -36,7 +37,7 @@ onUnmounted(() => {
 
 @mixin player-color {
   & {
-    color: #00ff96;
+    // color: #00ff96;
   }
 }
 
