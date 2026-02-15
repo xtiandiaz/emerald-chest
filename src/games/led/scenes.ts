@@ -1,42 +1,53 @@
-// import {
-//   Body,
-//   Scene,
-//   System,
-//   World,
-//   Screen,
-//   Collider,
-//   PhysicsSystem,
-//   Input,
-//   CollisionSensor,
-//   CollisionSensorSystem,
-//   type BodyOptions,
-// } from '@/assets/emerald'
-// import { BodyDumpSystem, ControlSystem, TestSystem } from './systems'
-// import type { InputAction } from './types'
-// import { Graphics } from 'pixi.js'
-
-import { CameraSystem, Input, PhysicsSystem, Scene, Screen } from '@emerald'
+import { CameraSystem, PhysicsSystem, Scene, Screen } from '@emerald'
 import type { LedComponents } from './components'
 import type { LedSignals } from './signals'
 import { createBounds } from '../entities.shared'
-import { createPlayer } from './entities'
+import { createForest, createPlayer } from './entities'
 import { ControlsSystem } from './systems'
-import { Rectangle } from 'pixi.js'
+import { Assets, Rectangle } from 'pixi.js'
+import { LedColor, LedCollisionLayer } from './types'
 
 export class MainScene extends Scene<LedComponents, LedSignals> {
   constructor() {
-    super([new PhysicsSystem(), new ControlsSystem(), new CameraSystem()], {
-      bounds: new Rectangle(0, 0, Screen.width * 2, Screen.height * 4),
-    })
+    super(
+      [
+        new PhysicsSystem({ debug: { rendersColliders: false } }),
+        new ControlsSystem(),
+        new CameraSystem(),
+      ],
+      {
+        bounds: new Rectangle(0, 0, Screen.width * 2, Screen.height * 4),
+      },
+    )
+  }
+
+  async load(): Promise<void> {
+    await Assets.loadBundle('led')
   }
 
   build(): void {
-    createBounds(this.boundsArea, 1, this, {
+    createBounds(this.boundsArea, this, {
+      color: LedColor.FOREGROUND,
+      thickness: Screen.height * 0.25,
+      layer: LedCollisionLayer.PLATFORMS,
       restitution: 0,
+      friction: {
+        static: 0,
+        dynamic: 1,
+      },
     })
+
+    createForest(this, { baseScale: 0.5, tint: LedColor.FOREGROUND_3 })
+    createForest(this, { baseScale: 0.75, tint: LedColor.FOREGROUND_2 })
+    createForest(this, { tint: LedColor.FOREGROUND })
+
     const player = createPlayer(this)
 
     this.setCurrentCamera(player.id)
+  }
+
+  async unload(): Promise<void> {
+    await Assets.unloadBundle('led')
   }
 }
 //   systems: System[] = [

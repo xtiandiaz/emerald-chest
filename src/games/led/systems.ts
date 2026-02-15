@@ -49,7 +49,9 @@ export class ControlsSystem extends System<LedComponents, LedSignals> {
 
         switch (e.code) {
           case 'Space':
-            if (!e.repeat && playerRayCast?.casts.get('is-grounded')) {
+            const isGrounded = playerRayCast?.casts.get('is-grounded')
+            // console.log(isGrounded)
+            if (!e.repeat && isGrounded) {
               // TODO apply a force completely ignoring the opposite gravity
               playerBody.applyForce({ x: 0, y: -25 })
             }

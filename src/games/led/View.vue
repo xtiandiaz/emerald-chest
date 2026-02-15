@@ -2,7 +2,7 @@
 import { onMounted, useTemplateRef, onUnmounted, ref } from 'vue';
 import { MainScene } from './scenes';
 import { Led, type LedState } from './game';
-import { Color } from './types';
+import { LedColor } from './types';
 
 const viewport = useTemplateRef<HTMLDivElement>('viewport')
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas')
@@ -12,7 +12,7 @@ const game = new Led(state.value)
 onMounted(async () => {
   await game.init({
     antialias: true,
-    background: Color.BACKGROUND,
+    background: LedColor.BACKGROUND,
     canvas: canvas.value!,
     resizeTo: viewport.value!,
   })

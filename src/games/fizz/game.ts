@@ -10,13 +10,8 @@ export interface FizzState extends Game.State {
 }
 
 export class Fizz extends Game<FizzComponents, FizzSignals, FizzState> {
-  async init(options: Partial<Game.Options>): Promise<void> {
-    await super.init(options)
+  async load(): Promise<void> {
     await Assets.init({ manifest: `${import.meta.env.BASE_URL}/assets/manifest.json` })
-
-    // Assets.addBundle('fizz', [
-    //   { alias: 'grid', src: `${import.meta.env.BASE_URL}/assets/fizz/grid.png` },
-    // ])
   }
 
   connect(signals: Signals.Bus<FizzSignals>, state: FizzState): Disconnectable[] {

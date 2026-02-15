@@ -30,12 +30,6 @@ export class MainScene extends Scene<FizzComponents, FizzSignals> {
     ])
   }
 
-  async deinit(): Promise<void> {
-    await super.deinit()
-
-    await Assets.unloadBundle('fizz')
-  }
-
   async load(): Promise<void> {
     await Assets.loadBundle('fizz')
   }
@@ -43,7 +37,8 @@ export class MainScene extends Scene<FizzComponents, FizzSignals> {
   build(): void {
     this.addChild(createStaticGrid())
 
-    createBounds(this.boundsArea, FizzCollisionLayer.BOUND, this, {
+    createBounds(this.boundsArea, this, {
+      layer: FizzCollisionLayer.BOUND,
       restitution: 0,
       friction: { static: 0, dynamic: 0 },
     })
@@ -54,5 +49,9 @@ export class MainScene extends Scene<FizzComponents, FizzSignals> {
     for (let i = 0; i < 4; i++) {
       createCollectible(this)
     }
+  }
+
+  async unload(): Promise<void> {
+    await Assets.unloadBundle('fizz')
   }
 }
